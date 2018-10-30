@@ -4,7 +4,6 @@
 
 #include "DLXSolver.h"
 
-#define N 9
 
 using namespace std;
 
@@ -41,13 +40,6 @@ int ** fromString(string s){
     return board;
 }
 
-void printBoard(int ** board){
-    for (int r = 0; r < N; r++){
-        for (int c = 0; c < N; c++)
-            printf("%2d", board[r][c]);
-        printf("\n");
-    }
-}
 
 void runExample(){
     vector<long> timings;
@@ -55,7 +47,9 @@ void runExample(){
     int ** board = fromString(const_cast<char *>("..5....3....9...8....57.....9.7....3.7.13..5.3.2......2...8......1..94259....78.."));
     //printBoard(board);
 
-    //DLXSolver solver = new DLXSolver();
+    DLXSolver* solver = new DLXSolver();
+    solver->printSolution(board);
+//    solver->solve(board);
 
 
 

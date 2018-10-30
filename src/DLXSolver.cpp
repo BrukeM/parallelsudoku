@@ -3,3 +3,7 @@
 //
 
 #include "DLXSolver.h"
+
+void DLXSolver::runSolver(int** sudoku) {
+    return;
+}

@@ -6,7 +6,11 @@
 #define PARALLELSUDOKU_DLXSOLVER_H
 
 
-class DLXSolver {
+#include "AbstractSudokuSolver.h"
+
+class DLXSolver : public AbstractSudokuSolver {
+public:
+    void runSolver(int** sudoku);
 
 };
 
