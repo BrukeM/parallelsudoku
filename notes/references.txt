@@ -2,3 +2,5 @@ https://www.geeksforgeeks.org/sudoku-backtracking-7/
 https://github.com/rafalio/dancing-links-java
 https://github.com/vduan/parallel-sudoku-solver
 https://ieeexplore.ieee.org/document/6915093 # parallel dancing links
+https://arxiv.org/pdf/cs/0011047.pdf - Knuth, Dancing Links
+https://shawnjzlee.me/dl/efficient-parallel-sudoku.pdf
