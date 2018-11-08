@@ -9,9 +9,13 @@
 #include "AbstractSudokuSolver.h"
 
 class DLXSolver : public AbstractSudokuSolver {
+private:
+    int getIdx(int row, int col, int num);
+    int ** sudokuExactCover();
+    int ** makeExactCoverGrid(int ** sudoku);
 public:
-    void runSolver(int** sudoku);
-
+    void generateAllSolutions();
+    void runSolver(int ** sudoku) override;
 };
 
 
