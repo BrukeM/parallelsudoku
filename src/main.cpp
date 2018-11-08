@@ -52,8 +52,8 @@ void runExample(){
     //printBoard(board);
 
     DLXSolver* solver = new DLXSolver();
-    solver->printSolution(board);
-//    solver->solve(board);
+    //solver->printSolution(board);
+    solver->solve(board);
 
 
 

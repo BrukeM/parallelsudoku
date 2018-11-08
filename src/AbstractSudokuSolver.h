@@ -6,7 +6,6 @@
 #define PARALLELSUDOKU_ABSTRACTSUDOKUSOLVER_H
 
 
-#include <jmorecfg.h>
 #include <iostream>
 #include <string>
 #include <math.h>
@@ -17,12 +16,12 @@
 class AbstractSudokuSolver {
 protected:
     virtual void runSolver(int** sudoku) = 0;
-    boolean validateSudoku(int** grid) {
+    bool validateSudoku(int** grid) {
         return true;
     }
 
 public:
-    boolean solve(int ** sudoku) {
+    bool solve(int ** sudoku) {
         if(!validateSudoku(sudoku)) {
             std::cout<<"Error: Invalid sudoku"<<std::endl;
             return  false;

@@ -3,17 +3,17 @@
 //
 
 #include "DLXSolver.h"
-#include "DancingLinks.h"
-#include "SudokuHandler.h"
+//#include "DancingLinks.h"
+//#include "SudokuHandler.h"
 
 int DLXSolver::getIdx(int row, int col, int num) {
     return ((row - 1) * N * N + (col - 1) * N + (num - 1));
 }
 
 int ** DLXSolver::sudokuExactCover() {
-    int ** R = new int*[9*9*4];
-    for (int i = 0; i < (9*9*4); ++i){
-        R[i] = new int[(9*9*9)];
+    int ** R = new int*[9*9*9];
+    for (int i = 0; i < (9*9*9); ++i){
+        R[i] = new int[(9*9*4)];
     }
     int hBase = 0;
 
@@ -81,12 +81,12 @@ int ** DLXSolver::makeExactCoverGrid(int ** sudoku) {
 
 void DLXSolver::generateAllSolutions() {
     int ** cover = sudokuExactCover();
-    DancingLinks dlx = new DancingLinks(cover, new SudokuHandler(N));
-    dlx.runSolver();
+    //DancingLinks dlx = new DancingLinks(cover, new SudokuHandler(N));
+    //dlx.runSolver();
 }
 
 void DLXSolver::runSolver(int** sudoku) {
     int ** cover = makeExactCoverGrid(sudoku);
-    DancingLinks dlx = new DancingLinks(cover, new SudokuHandler(N));
-    dlx.runSolver();
+    //DancingLinks dlx = new DancingLinks(cover, new SudokuHandler(N));
+    //dlx.runSolver();
 }

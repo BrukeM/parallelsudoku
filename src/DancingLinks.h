@@ -6,7 +6,6 @@
 #define PARALLELSUDOKU_DANCINGLINKS_H
 
 #include <iostream>
-#include <jmorecfg.h>
 #include <string>
 #include <cmath>
 #include <vector>
