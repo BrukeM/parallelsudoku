@@ -37,24 +37,24 @@ DancingNode* DancingNode::hookRight(DancingNode* n1){
     return n1;
 }
 
-void DancingNode::unlinkLR(){
+void DancingNode::unlinkLR(int * updates){
     this->L->R = this->R;
     this->R->L = this->L;
     updates++;
 }
 
-void DancingNode::relinkLR(){
+void DancingNode::relinkLR(int * updates){
     this->L->R = this->R->L = this;
     updates++;
 }
 
-void DancingNode::unlinkUD(){
+void DancingNode::unlinkUD(int * updates){
     this->U->D = this->D;
     this->D->U = this->U;
     updates++;
 }
 
-void DancingNode::relinkUD(){
+void DancingNode::relinkUD(int * updates){
     this->U->D = this->D->U = this;
     updates++;
 }

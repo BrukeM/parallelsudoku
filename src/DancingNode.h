@@ -25,10 +25,10 @@ public:
 
     DancingNode* hookRight(DancingNode* n1);
 
-    void unlinkLR();
-    void relinkLR();
-    void unlinkUD();
-    void relinkUD();
+    void unlinkLR(int * updates);
+    void relinkLR(int * updates);
+    void unlinkUD(int * updates);
+    void relinkUD(int * updates);
 
     DancingNode();
     DancingNode(ColumnNode* c);

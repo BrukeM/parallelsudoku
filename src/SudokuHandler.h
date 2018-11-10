@@ -13,12 +13,16 @@
 class SudokuHandler {
 private:
 
-    int ** parseBoard(std::list<DancingLinks::DancingNode> answer);
+    int ** parseBoard(std::list<DancingNode> answer);
 
 public:
     int size = N;
 
-    void handleSolution(std::list<DancingLinks::DancingNode> answer);
+    void handleSolution(std::list<DancingNode> answer);
+
+    SudokuHandler(){
+
+    }
 
     SudokuHandler(int boardSize){
         size = boardSize;
