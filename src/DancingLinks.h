@@ -28,7 +28,7 @@ private:
 
     void search(int k);
     ColumnNode selectColumnNodeNaive();
-    ColumnNode selectColumnNodeHeuristic()
+    ColumnNode selectColumnNodeHeuristic();
     ColumnNode selectColumnNodeRandom();
     ColumnNode selectColumnNodeNth(int n);
     void printBoard();
@@ -45,9 +45,5 @@ public:
     void runSolver();
 
 };
-
-
-
-
 
 #endif //PARALLELSUDOKU_DANCINGLINKS_H

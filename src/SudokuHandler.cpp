@@ -16,7 +16,7 @@ int ** SudokuHandler::parseBoard(std::list<DancingNode> answer) {
     for (auto n : answer){
         DancingNode rcNode = n;
         int min = std::stoi(rcNode.C->getName());
-        for(DancingNode * tmp = n.R; tmp != &n; tmp = tmp.R){
+        for(DancingNode * tmp = n.R; tmp != &n; tmp = tmp->R){
             int val = std::stoi(tmp->C->getName());
             if (val < min) {
                 min = val;
@@ -24,7 +24,7 @@ int ** SudokuHandler::parseBoard(std::list<DancingNode> answer) {
             }
         }
         int ans1 = std::stoi(rcNode.C->getName());
-        int ans2 = std::(rcNode.R->C->getName());
+        int ans2 = std::stoi(rcNode.R->C->getName());
         int r = ans1 / size;
         int c = ans1 % size;
         int num = (ans2 % size) + 1;

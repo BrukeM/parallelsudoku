@@ -2,13 +2,13 @@
 // Created by bruke on 11/7/2018.
 //
 
+#include "DancingLinks.h"
+
 #ifndef PARALLELSUDOKU_SOLUTIONHANDLER_H
 #define PARALLELSUDOKU_SOLUTIONHANDLER_H
 
 #define N 9
-
 #include <list>
-#include "DancingLinks.h"
 
 class SudokuHandler {
 private:

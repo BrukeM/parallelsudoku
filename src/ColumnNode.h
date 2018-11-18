@@ -12,8 +12,6 @@ class ColumnNode : public DancingNode {
 
     int size; // number of ones in current column
     std::string name;
-private:
-    typedef DancingNode super;
 public:
     std::string getName();
     ColumnNode(std::string N);

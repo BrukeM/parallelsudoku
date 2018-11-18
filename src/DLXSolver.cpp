@@ -62,6 +62,7 @@ int ** DLXSolver::sudokuExactCover() {
 
 int ** DLXSolver::makeExactCoverGrid(int ** sudoku) {
     int ** R = sudokuExactCover();
+    int ** K = sudokuExactCover();
     for(int i = 1; i <= N; i++){
         for(int j = 1; j <= N; j++){
             int n = sudoku[i - 1][j - 1];
@@ -69,11 +70,19 @@ int ** DLXSolver::makeExactCoverGrid(int ** sudoku) {
                 for(int num = 1; num <= N; num++){
                     if (num != n){
                         int index = getIdx(i, j, num);
-                        std::fill(R[index], R[index] + sizeof(R[index])/sizeof(int), 0);
+                        std::cout<<index<<" "<<n<<std::endl;
+                        std::fill(R[index], R[index] + sizeof(R[index]), 0);
                     }
                 }
             }
         }
+    }
+    for (int j = 0; j < 9 * 9 * 9; j++) {
+        for (int k = 0; k < 9 * 9 * 4; k++) {
+            if(R[j][k] != K[j][k])
+                std::cout<<"here";
+        }
+//        std::cout<<std::endl;
     }
     return R;
 }
@@ -86,6 +95,7 @@ void DLXSolver::generateAllSolutions() {
 }
 
 void DLXSolver::runSolver(int** sudoku) {
+//    sudokuExactCover();
     int ** cover = makeExactCoverGrid(sudoku);
     //DancingLinks dlx = new DancingLinks(cover, new SudokuHandler(N));
     //dlx.runSolver();
