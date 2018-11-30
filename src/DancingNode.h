@@ -11,6 +11,7 @@
 #include <vector>
 #include <cassert>
 
+//#include "ColumnNode.h"
 class ColumnNode;
 
 class DancingNode{
@@ -32,6 +33,8 @@ public:
 
     DancingNode();
     DancingNode(ColumnNode* c);
+
+    operator ColumnNode() const;
 };
 
 #endif //PARALLELSUDOKU_DANCINGNODE_H

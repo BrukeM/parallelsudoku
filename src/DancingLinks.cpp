@@ -37,14 +37,14 @@ void DancingLinks::search(int k) {
 }
 
 ColumnNode DancingLinks::selectColumnNodeNaive() {
-    //return (ColumnNode) *(header->R);
-    return ColumnNode("");
+    return (ColumnNode) *(header->R);
+//    return ColumnNode("");
 }
 
 ColumnNode DancingLinks::selectColumnNodeHeuristic() {
     int min = INT8_MAX;
     ColumnNode * ret = nullptr;
-
+    
     return ColumnNode("");
 }
 

@@ -10,9 +10,9 @@
 
 class ColumnNode : public DancingNode {
 
+public:
     int size; // number of ones in current column
     std::string name;
-public:
     std::string getName();
     ColumnNode(std::string N);
     void cover(ColumnNode * header, int * updates);
@@ -21,6 +21,7 @@ public:
     bool operator==(const DancingNode& rhs);
     bool operator!=(const ColumnNode& rhs);
     bool operator!=(const DancingNode& rhs);
+    operator DancingNode() const;
 
 };
 

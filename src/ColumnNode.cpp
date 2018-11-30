@@ -50,3 +50,23 @@ bool ColumnNode::operator!=(const ColumnNode &rhs) {
 bool ColumnNode::operator!=(const DancingNode &rhs) {
     return (name != rhs.C->name) || (size != rhs.C->size) || (L != rhs.L) || (R != rhs.R) || (U != rhs.U) || (D != rhs.D);
 }
+
+ColumnNode::operator DancingNode() const {
+    DancingNode * d = new DancingNode(this->C);
+    d->R = this->R;
+    d->L = this->L;
+    d->U = this->U;
+    d->D = this->D;
+    return *d;
+}
+
+
+DancingNode::operator ColumnNode() const {
+    ColumnNode * c = new ColumnNode(this->C->getName());
+    c->size = this->C->size;
+    c->L = this->L;
+    c->R = this->R;
+    c->U = this->U;
+    c->D = this->D;
+    return *c;
+}
