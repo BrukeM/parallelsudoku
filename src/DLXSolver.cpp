@@ -57,6 +57,14 @@ int ** DLXSolver::sudokuExactCover() {
         }
     }
 
+//    for(int i = 0; i < 9*9*9; i++) {
+//        for(int j = 0; j < 9 *9 *4; j++) {
+//            if(R[i][j] == 1)
+//            std::cout<<"i: " << i << " j: " << j << " --> " << R[i][j]<<", ";
+//        }
+//        std::cout<<std::endl;
+//    }
+
     return R;
 }
 

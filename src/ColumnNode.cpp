@@ -40,13 +40,13 @@ bool ColumnNode::operator==(const ColumnNode &rhs) {
 }
 
 bool ColumnNode::operator==(const DancingNode &rhs) {
-    return (name == rhs.C->name) && (size == rhs.C->size);
+    return (name == rhs.C->name) && (size == rhs.C->size) && (L == rhs.L) && (R == rhs.R) && (U == rhs.U) && (D == rhs.D);
 }
 
 bool ColumnNode::operator!=(const ColumnNode &rhs) {
-    return (name != rhs.name) && (size != rhs.size);
+    return (name != rhs.name) || (size != rhs.size);
 }
 
 bool ColumnNode::operator!=(const DancingNode &rhs) {
-    return (name != rhs.C->name) && (size != rhs.C->size);
+    return (name != rhs.C->name) || (size != rhs.C->size) || (L != rhs.L) || (R != rhs.R) || (U != rhs.U) || (D != rhs.D);
 }
