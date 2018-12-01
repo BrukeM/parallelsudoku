@@ -44,8 +44,27 @@ ColumnNode DancingLinks::selectColumnNodeNaive() {
 ColumnNode DancingLinks::selectColumnNodeHeuristic() {
     int min = INT8_MAX;
     ColumnNode * ret = nullptr;
-    
-    return ColumnNode("");
+    for (ColumnNode c = (ColumnNode) * header->R; c != *header; c = (ColumnNode) * c.R){
+        if(c.size < min){
+            min = c.size;
+            ret = &c;
+        }
+    }
+    return *ret;
+//    return ColumnNode("");
 }
+
+void DancingLinks::printBoard() {
+    printf("Board Config: ");
+    for(ColumnNode tmp = (ColumnNode) * header->R; tmp != *header; tmp = (ColumnNode) *tmp.R){
+        for(DancingNode * d = tmp.D; tmp != *d; d = d.D){
+            std::string ret = "";
+            ret.append(d->C->name);
+            ret.append(" --> ");
+            for(DancingNode i = dR)
+        }
+    }
+}
+
 
 

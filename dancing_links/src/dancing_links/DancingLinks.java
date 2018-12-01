@@ -76,7 +76,7 @@ public class DancingLinks{
             C = this;
         }
 
-        void cover(){
+        void cover(ColumnNode header){
             unlinkLR();
             for(DancingNode i = this.D; i != this; i = i.D){
                 for(DancingNode j = i.R; j != i; j = j.R){
@@ -87,7 +87,7 @@ public class DancingLinks{
             header.size--; // not part of original
         }
 
-        void uncover(){
+        void uncover(ColumnNode header){
             for(DancingNode i = this.U; i != this; i = i.U){
                 for(DancingNode j = i.L; j != i; j = j.L){
                     j.C.size++;
@@ -106,7 +106,7 @@ public class DancingLinks{
     private List<DancingNode> answer;
 
     // Heart of the algorithm
-    private void search(int k){
+    private void search(ColumnNode header, int k){
         if (header.R == header){ // all the columns removed
             if(verbose){
                 System.out.println("-----------------------------------------");
@@ -118,26 +118,26 @@ public class DancingLinks{
             }
             solutions++;
         } else{
-            ColumnNode c = selectColumnNodeHeuristic();
-            c.cover();
+            ColumnNode c = selectColumnNodeHeuristic(header);
+            c.cover(header);
 
             for(DancingNode r = c.D; r != c; r = r.D){
                 answer.add(r);
 
                 for(DancingNode j = r.R; j != r; j = j.R){
-                    j.C.cover();
+                    j.C.cover(header);
                 }
 
-                search(k + 1);
+                search(header, k + 1);
 
                 r = answer.remove(answer.size() - 1);
                 c = r.C;
 
                 for(DancingNode j = r.L; j != r; j = j.L){
-                    j.C.uncover();
+                    j.C.uncover(header);
                 }
             }
-            c.uncover();
+            c.uncover(header);
         }
     }
 
@@ -145,7 +145,7 @@ public class DancingLinks{
         return (ColumnNode) header.R;
     }
 
-    private ColumnNode selectColumnNodeHeuristic(){
+    private ColumnNode selectColumnNodeHeuristic(ColumnNode header){
         int min = Integer.MAX_VALUE;
         ColumnNode ret = null;
         for(ColumnNode c = (ColumnNode) header.R; c != header; c = (ColumnNode) c.R){
@@ -253,7 +253,7 @@ public class DancingLinks{
         solutions = 0;
         updates = 0;
         answer = new LinkedList<DancingNode>();
-        search(0);
+        search(header, 0);
         if(verbose) showInfo();
     }
 
