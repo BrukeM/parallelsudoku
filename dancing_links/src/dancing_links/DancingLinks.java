@@ -15,114 +15,151 @@ public class DancingLinks {
     static final boolean verbose = true;
 
     class DancingNode {
-
         DancingNode L, R, U, D;
         ColumnNode C;
-
-        // hooks node n1 `below` current node
-        DancingNode hookDown(DancingNode n1) {
-            assert (this.C == n1.C);
-            n1.D = this.D;
-            n1.D.U = n1;
-            n1.U = this;
-            this.D = n1;
-            return n1;
-        }
-
-        // hooke a node n1 to the right of `this` node
-        DancingNode hookRight(DancingNode n1) {
-            n1.R = this.R;
-            n1.R.L = n1;
-            n1.L = this;
-            this.R = n1;
-            return n1;
-        }
-
-        void unlinkLR() {
-            this.L.R = this.R;
-            this.R.L = this.L;
-            updates++;
-        }
-
-        void relinkLR() {
-            this.L.R = this.R.L = this;
-            updates++;
-        }
-
-        void unlinkUD() {
-            this.U.D = this.D;
-            this.D.U = this.U;
-            updates++;
-        }
-
-        void relinkUD() {
-            this.U.D = this.D.U = this;
-            updates++;
-        }
-
-        public DancingNode() {
-            L = R = U = D = this;
-        }
-
-        public DancingNode(ColumnNode c) {
-            this();
-            C = c;
+        
+        public DancingNode(){
+            L = R = D = U = this;
         }
         
-        public DancingNode(ColumnNode orig, boolean copy_flag){
-            L = orig.L;
-            R = orig.R;
-            D = orig.D;
-            U = orig.U;
+        public DancingNode(ColumnNode c){
+            this();
+            this.C = c;
+        }
+        
+        public DancingNode(DancingNode orig){
+            this.setLeft(orig.getLeft());
+            this.setRight(orig.getRight());
+            this.setDown(orig.getDown());
+            this.setUp(orig.getUp());
+            this.C = orig.getColumnNode();
+        }
+        
+        // Set the links
+        public void setLeft(DancingNode L){
+            this.L = L;
+        }
+        
+        public void setRight(DancingNode R){
+            this.R = R;
+        }
+        
+        public void setDown(DancingNode D){
+            this.D = D;
+        }
+        
+        public void setUp(DancingNode U){
+            this.U = U;
+        }
+        
+        // Get the links
+        public DancingNode getLeft(){
+            return this.L;
+        }
+        
+        public DancingNode getRight(){
+            return this.R;
+        }
+        
+        public DancingNode getDown(){
+            return this.D;
+        }
+        
+        public DancingNode getUp(){
+            return this.U;
+        }
+        
+        public ColumnNode getColumnNode(){
+            return this.C;
+        }
+        
+        // Hooks node n1 `below` current node
+        DancingNode hookDown(DancingNode n1){
+            assert(this.getColumnNode() == n1.getColumnNode());
+            n1.setDown(this.D);
+            n1.getDown().setUp(n1);
+            n1.setUp(this);
+            this.setDown(n1);            
+            return n1;
+        }
+        
+        // Hooks a node n1 to the right of `this` node
+        DancingNode hookRight(DancingNode n1){
+            n1.setRight(this.R);
+            n1.getRight().setLeft(n1);
+            n1.setLeft(this);
+            this.setRight(n1);
+            return n1;
+        }
+        
+        void unlinkLR(){
+            this.getLeft().setRight(this.R);
+            this.getRight().setLeft(this.L);
+            updates++;
+        }
+        
+        void relinkLR(){
+            this.getLeft().setRight(this);
+            this.getRight().setLeft(this);
+            updates++;
+        }
+        
+        void unlinkUD(){
+            this.getUp().setDown(this.D);
+            this.getDown().setUp(this.U);
+            updates++;
+        }
+        
+        void relinkUD(){
+            this.getUp().setDown(this);
+            this.getDown().setUp(this);
+            updates++;
         }
     }
-
-    class ColumnNode extends DancingNode implements Cloneable, Serializable {
-
+    
+    class ColumnNode extends DancingNode {
+        
         int size; // number of ones in current column
         String name;
         
-        public ColumnNode(ColumnNode orig, String n){
-            super();
-            C = orig.C;
-            L = orig.L;
-            R = orig.R;
-            D = orig.D;
-            U = orig.U;
-            name = n;
-            size = orig.size;
-        }
-        
-        public ColumnNode(String n) {
+        public ColumnNode(String n){
             super();
             size = 0;
             name = n;
             C = this;
         }
-
-        void cover(ColumnNode header) {
+        
+        // Copy constructor
+        public ColumnNode(ColumnNode orig){
+            super((DancingNode) orig);
+            size = orig.size;
+            name = orig.name + "_a";
+            C = this;
+        }
+        
+        void cover(ColumnNode header){
             unlinkLR();
-            for (DancingNode i = this.D; i != this; i = i.D) {
-                for (DancingNode j = i.R; j != i; j = j.R) {
+            for (DancingNode i = this.getDown(); i != this; i = i.getDown()){
+                for (DancingNode j = i.getRight(); j != i; j = j.getRight()){
                     j.unlinkUD();
-                    j.C.size--;
+                    j.getColumnNode().size--;
                 }
             }
-            header.size--; // not part of original
+            header.size--;
         }
-
-        void uncover(ColumnNode header) {
-            for (DancingNode i = this.U; i != this; i = i.U) {
-                for (DancingNode j = i.L; j != i; j = j.L) {
-                    j.C.size++;
+        
+        void uncover(ColumnNode header){
+            for (DancingNode i = this.getUp(); i != this; i = i.getUp()){
+                for (DancingNode j = i.getLeft(); j != i; j = j.getLeft()){
+                    j.getColumnNode().size++;
                     j.relinkUD();
                 }
             }
             relinkLR();
-            header.size++; // not part of original
+            header.size++;
         }
     }
-
+    
     private ColumnNode header;
     private ColumnNode newHeader;
     private int solutions = 0;
@@ -132,7 +169,7 @@ public class DancingLinks {
 
     // Heart of the algorithm
     private void search(ColumnNode header, int k) {
-        if (header.R == header) { // all the columns removed
+        if (header.getRight() == header) { // all the columns removed
             if (verbose) {
                 System.out.println("-----------------------------------------");
                 System.out.println("Solution #" + solutions + "\n");
@@ -146,20 +183,20 @@ public class DancingLinks {
             ColumnNode c = selectColumnNodeHeuristic(header);
             c.cover(header);
 
-            for (DancingNode r = c.D; r != c; r = r.D) {
+            for (DancingNode r = c.getDown(); r != c; r = r.getDown()) {
                 answer.add(r);
 
-                for (DancingNode j = r.R; j != r; j = j.R) {
-                    j.C.cover(header);
+                for (DancingNode j = r.getRight(); j != r; j = j.getRight()) {
+                    j.getColumnNode().cover(header);
                 }
 
                 search(header, k + 1);
 
                 r = answer.remove(answer.size() - 1);
-                c = r.C;
+                c = r.getColumnNode();
 
-                for (DancingNode j = r.L; j != r; j = j.L) {
-                    j.C.uncover(header);
+                for (DancingNode j = r.getLeft(); j != r; j = j.getLeft()) {
+                    j.getColumnNode().uncover(header);
                 }
             }
             c.uncover(header);
@@ -173,7 +210,7 @@ public class DancingLinks {
     private ColumnNode selectColumnNodeHeuristic(ColumnNode header) {
         int min = Integer.MAX_VALUE;
         ColumnNode ret = null;
-        for (ColumnNode c = (ColumnNode) header.R; c != header; c = (ColumnNode) c.R) {
+        for (ColumnNode c = (ColumnNode) header.getRight(); c != header; c = (ColumnNode) c.getRight()) {
             if (c.size < min) {
                 min = c.size;
                 ret = c;
@@ -208,52 +245,45 @@ public class DancingLinks {
 
     private void printBoard() { // diagnostics to have a look at the board state
         System.out.println("Board Config: ");
-        for (ColumnNode tmp = (ColumnNode) header.R; tmp != header; tmp = (ColumnNode) tmp.R) {
+        for (ColumnNode tmp = (ColumnNode) header.getRight(); tmp != header; tmp = (ColumnNode) tmp.getRight()) {
 
-            for (DancingNode d = tmp.D; d != tmp; d = d.D) {
+            for (DancingNode d = tmp.getDown(); d != tmp; d = d.getDown()) {
                 String ret = "";
-                ret += d.C.name + " --> ";
-                for (DancingNode i = d.R; i != d; i = i.R) {
-                    ret += i.C.name + " --> ";
+                ret += d.getColumnNode().name + " --> ";
+                for (DancingNode i = d.getRight(); i != d; i = i.getRight()) {
+                    ret += i.getColumnNode().name + " --> ";
                 }
                 System.out.println(ret);
             }
         }
     }
     
-    public ColumnNode deep_copy(ColumnNode headerNode, int[][] grid){
-        // HARD CODE
-        final int COLS = 324;
+    private ColumnNode deep_copy(ColumnNode oldHeaderNode){
+        // HARD CODE:
         final int ROWS = 729;
+        final int COLS = 324;
         
-        ColumnNode newHeaderNode = new ColumnNode(headerNode, "newHeader");
-        ArrayList<ColumnNode> newColumnNodes = new ArrayList<ColumnNode>();
+//        System.out.println(oldHeaderNode.name + "\n");
+        // Check if there is anything at all in the old header node
+        if (oldHeaderNode.getLeft().getColumnNode() == oldHeaderNode.getColumnNode())
+            return null;
         
-//        while(headerNode.L.C != headerNode){
-            for(int i = 0; i < COLS; i++){
-                ColumnNode k = new ColumnNode(headerNode.L.C, Integer.toString(400+i));
-                newColumnNodes.add(k);
-                newHeaderNode = (ColumnNode) newHeader.hookRight(k);
-                System.out.println(newHeaderNode.L.C.name +"<-" + newHeaderNode.name + "->" + newHeaderNode.R.C.name);
-            }
-            newHeaderNode = newHeaderNode.R.C;
-            
-//            for(int i = 0; i < ROWS; i++){
-//                DancingNode old = null;
-//                for(int j = 0; j < COLS; j++){
-//                    if(grid[i][j] == 1){
-//                        ColumnNode newCol = newColumnNodes.get(j);
-//                        DancingNode newCopy = new DancingNode(newCol, true);
-//                        if (old == null)
-//                            old = newCopy;
-//                        newCol.U.hookDown(newCopy);
-//                        old = old.hookRight(newCopy);
-//                        newCol.size++;
-//                    }
-//                }
-//            }
-//        }
-        newHeaderNode.size = COLS;        
+        ColumnNode newHeaderNode = new ColumnNode(oldHeaderNode);
+        System.out.println(newHeaderNode.name);
+        
+        ArrayList<ColumnNode> copy_of_ColumnNodes = new ArrayList<ColumnNode>();
+        
+        oldHeaderNode = oldHeaderNode.getRight().getColumnNode();
+        
+        while((ColumnNode) oldHeaderNode.getRight() != oldHeaderNode){
+            ColumnNode new_col = new ColumnNode(oldHeaderNode);
+            copy_of_ColumnNodes.add(new_col);
+            newHeaderNode = (ColumnNode) newHeaderNode.hookRight(new_col);
+            oldHeaderNode = (ColumnNode) oldHeaderNode.getRight();
+            System.out.println(newHeaderNode.getLeft().getColumnNode().name + "<-" + newHeaderNode.name + "->" + newHeaderNode.getRight().getColumnNode().name);
+        }
+        
+        
         return newHeaderNode;
     }
 
@@ -270,10 +300,11 @@ public class DancingLinks {
             ColumnNode n = new ColumnNode(Integer.toString(i));
             columnNodes.add(n);
             headerNode = (ColumnNode) headerNode.hookRight(n);
-//            System.out.println(headerNode.L.C.name +"<-" + headerNode.name + "->" + headerNode.R.C.name);
+            System.out.println(headerNode.getLeft().getColumnNode().name +"<-" + headerNode.name + "->" + headerNode.getRight().getColumnNode().name);
         }
+        System.out.println("\n==============================================================================================\n");
 
-        headerNode = headerNode.R.C;
+        headerNode = headerNode.getRight().getColumnNode();
 //        System.out.println(headerNode.D.C.name);
 
         for (int i = 0; i < ROWS; i++) {
@@ -285,15 +316,16 @@ public class DancingLinks {
                     if (prev == null) {
                         prev = newNode;
                     }
-                    col.U.hookDown(newNode);
-//                    System.out.println(col.U.L.C.name + "<-" + col.U.C.name + "->" + col.U.R.C.name);
+                    col.getUp().hookDown(newNode);
+//                    System.out.println(col.getUp().getLeft().getColumnNode().name + "<-" + col.getUp().getColumnNode().name + "->" + col.getUp().getRight().getColumnNode().name);
                     prev = prev.hookRight(newNode);
+//                    System.out.println(prev.L.C.name +"<-" + prev.C.name + "->" + prev.R.C.name);
 //                    System.out.println(prev.L.C.name);
                     col.size++;
                 }
             }
         }
-
+        
         headerNode.size = COLS;
 
         return headerNode;
@@ -312,13 +344,8 @@ public class DancingLinks {
 
     public DancingLinks(int[][] grid, SolutionHandler h) {
         header = makeDLXBoard(grid);
-        newHeader = deep_copy(header, grid);
+        newHeader = deep_copy(header);
         handler = h;
-    }
-
-    public ColumnNode duplicateGrid(ColumnNode oldHeader) {
-        
-        return oldHeader;
     }
 
     public void runSolver() {
