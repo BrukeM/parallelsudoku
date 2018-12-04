@@ -38,6 +38,19 @@ public class DancingLinks {
             return n1;
         }
 
+        // hooke a node n1 to the right of `this` node
+        DancingNode hookRight(DancingNode n1, boolean verbose) {
+            n1.R = this.R;
+            System.out.println("step 1");
+            n1.R.L = n1;
+            System.out.println("step 2");
+            n1.L = this;
+            System.out.println("step 3");
+            this.R = n1;
+            System.out.println("step 4");
+            return n1;
+        }
+
         void unlinkLR() {
             this.L.R = this.R;
             this.R.L = this.L;
@@ -69,11 +82,13 @@ public class DancingLinks {
             C = c;
         }
         
-        public DancingNode(ColumnNode orig, boolean copy_flag){
+        public DancingNode(ColumnNode c, DancingNode orig){
+            C = c;
             L = orig.L;
             R = orig.R;
             D = orig.D;
             U = orig.U;
+            
         }
     }
 
@@ -83,14 +98,14 @@ public class DancingLinks {
         String name;
         
         public ColumnNode(ColumnNode orig, String n){
-            super();
-            C = orig.C;
-            L = orig.L;
-            R = orig.R;
-            D = orig.D;
-            U = orig.U;
-            name = n;
-            size = orig.size;
+            //super();
+            this.C = this;
+            this.L = orig.L;
+            this.R = orig.R;
+            this.D = this;
+            this.U = this;
+            this.name = n;
+            this.size = orig.size;
         }
         
         public ColumnNode(String n) {
@@ -226,33 +241,70 @@ public class DancingLinks {
         final int COLS = 324;
         final int ROWS = 729;
         
-        ColumnNode newHeaderNode = new ColumnNode(headerNode, "newHeader");
-        ArrayList<ColumnNode> newColumnNodes = new ArrayList<ColumnNode>();
-        
-//        while(headerNode.L.C != headerNode){
-            for(int i = 0; i < COLS; i++){
-                ColumnNode k = new ColumnNode(headerNode.L.C, Integer.toString(400+i));
-                newColumnNodes.add(k);
-                newHeaderNode = (ColumnNode) newHeader.hookRight(k);
-                System.out.println(newHeaderNode.L.C.name +"<-" + newHeaderNode.name + "->" + newHeaderNode.R.C.name);
+        HashMap<DancingNode, DancingNode> nodeMap = new HashMap<>();
+        nodeMap.put(headerNode, new ColumnNode(headerNode, "newHeader"));
+        for (ColumnNode c = (ColumnNode) headerNode.R; c != headerNode; c = (ColumnNode) c.R){
+            nodeMap.put(c, new ColumnNode(c, c.name + "prime"));
+            for(DancingNode d = c.D; d != c; d = d.D){
+                nodeMap.put(d, new DancingNode((ColumnNode) nodeMap.get(c), d));
             }
-            newHeaderNode = newHeaderNode.R.C;
-            
-//            for(int i = 0; i < ROWS; i++){
-//                DancingNode old = null;
-//                for(int j = 0; j < COLS; j++){
-//                    if(grid[i][j] == 1){
-//                        ColumnNode newCol = newColumnNodes.get(j);
-//                        DancingNode newCopy = new DancingNode(newCol, true);
-//                        if (old == null)
-//                            old = newCopy;
-//                        newCol.U.hookDown(newCopy);
-//                        old = old.hookRight(newCopy);
-//                        newCol.size++;
-//                    }
-//                }
-//            }
-//        }
+        }
+//        System.out.println(((ColumnNode) nodeMap.get(headerNode.R)).name);
+        ColumnNode newHeaderNode = (ColumnNode) nodeMap.get(headerNode);
+        ColumnNode currentColumnNewNode = newHeaderNode;
+        DancingNode currentDancingNewNode;
+        for (ColumnNode c = (ColumnNode) headerNode; !c.name.equals(newHeaderNode.name); c = (ColumnNode) c.R){
+//            System.out.println("c name: " + c.name);
+//            System.out.println("in loop: " + ((ColumnNode) c.R).name);
+//            System.out.println("in loop: " + ((ColumnNode) nodeMap.get(c.R)).name);
+            if("newHeader".equals(((ColumnNode) nodeMap.get(c.R)).name)){
+//                System.out.println("finished");
+                currentColumnNewNode.R = newHeaderNode;
+                break;
+            } else {
+                currentColumnNewNode.R = nodeMap.get(c.R);                
+                currentDancingNewNode = currentColumnNewNode.R;
+//                System.out.println(((ColumnNode) c.R).name);
+                for (DancingNode d = c.R; !d.C.name.equals(((ColumnNode) currentColumnNewNode.R).name); d = d.D){
+                    System.out.println("\td col name: " + d.C.name);
+                    System.out.println("\td val: " + d.D);
+                    System.out.println("\tin subloop: " + nodeMap.get(d.D));
+                    if(d.D == c.R){
+                        currentDancingNewNode.D = currentColumnNewNode.R;
+                        break;
+                    } else {
+                        currentDancingNewNode.D = nodeMap.get(d.D);
+                        currentDancingNewNode = currentDancingNewNode.D;
+                        currentDancingNewNode.U = nodeMap.get(d);
+    //                    break;
+                    }
+                }
+//                currentNewNode.L = nodeMap.get(c);
+                currentColumnNewNode = (ColumnNode) currentColumnNewNode.R;
+//                break;
+            }
+        }
+        
+//        ColumnNode newHeaderNode = new ColumnNode(headerNode, "newHeader");
+        ArrayList<ColumnNode> newColumnNodes = new ArrayList<ColumnNode>();
+        System.out.println("new");
+        System.out.println(newHeaderNode.C.name);
+        System.out.println(newHeaderNode.R.C.name);
+//        System.out.println(newHeaderNode.L.C.name);
+//        System.out.println(newHeaderNode.U.C.name);
+//        System.out.println(newHeaderNode.D.C.name);
+//        System.out.println(newHeaderNode.size);
+//        System.out.println(newHeaderNode.name);
+        System.out.println("old");
+        System.out.println(headerNode.C.name);
+        System.out.println(headerNode.R.C.name);
+//        System.out.println(headerNode.L.C.name);
+//        System.out.println(headerNode.U.C.name);
+//        System.out.println(headerNode.D.C.name);
+//        System.out.println(headerNode.size);
+//        System.out.println(headerNode.name);
+        
+        
         newHeaderNode.size = COLS;        
         return newHeaderNode;
     }
