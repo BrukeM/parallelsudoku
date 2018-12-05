@@ -9,7 +9,7 @@
  * @author taha
  */
 public class Node {
-    int xUp, yUp, xDown, yDown, xLeft, yLeft, xRight, yRight, xColumn, yColumn, size ;
+    int columnUp, rowUp, columnDown, rowDown, columnLeft, rowLeft, columnRight, rowRight, columnColumn, rowColumn, size ;
 
     public int getSize() {
         return size;
@@ -19,83 +19,110 @@ public class Node {
         this.size = size;
     }
 
-    public int getxUp() {
-        return xUp;
+    public int getcolumnUp() {
+        return columnUp;
     }
 
-    public void setxUp(int xUp) {
-        this.xUp = xUp;
+    public void setcolumnUp(int columnUp) {
+        this.columnUp = columnUp;
     }
 
-    public int getyUp() {
-        return yUp;
+    public int getrowUp() {
+        return rowUp;
     }
 
-    public void setyUp(int yUp) {
-        this.yUp = yUp;
+    public void setrowUp(int rowUp) {
+        this.rowUp = rowUp;
     }
 
-    public int getxDown() {
-        return xDown;
+    public int getcolumnDown() {
+        return columnDown;
     }
 
-    public void setxDown(int xDown) {
-        this.xDown = xDown;
+    public void setcolumnDown(int columnDown) {
+        this.columnDown = columnDown;
     }
 
-    public int getyDown() {
-        return yDown;
+    public int getrowDown() {
+        return rowDown;
     }
 
-    public void setyDown(int yDown) {
-        this.yDown = yDown;
+    public void setrowDown(int rowDown) {
+        this.rowDown = rowDown;
     }
 
-    public int getxLeft() {
-        return xLeft;
+    public int getcolumnLeft() {
+        return columnLeft;
     }
 
-    public void setxLeft(int xLeft) {
-        this.xLeft = xLeft;
+    public void setcolumnLeft(int columnLeft) {
+        this.columnLeft = columnLeft;
     }
 
-    public int getyLeft() {
-        return yLeft;
+    public int getrowLeft() {
+        return rowLeft;
     }
 
-    public void setyLeft(int yLeft) {
-        this.yLeft = yLeft;
+    public void setrowLeft(int rowLeft) {
+        this.rowLeft = rowLeft;
     }
 
-    public int getxRight() {
-        return xRight;
+    public int getcolumnRight() {
+        return columnRight;
     }
 
-    public void setxRight(int xRight) {
-        this.xRight = xRight;
+    public void setcolumnRight(int columnRight) {
+        this.columnRight = columnRight;
     }
 
-    public int getyRight() {
-        return yRight;
+    public int getrowRight() {
+        return rowRight;
     }
 
-    public void setyRight(int yRight) {
-        this.yRight = yRight;
+    public void setrowRight(int rowRight) {
+        this.rowRight = rowRight;
     }
 
-    public int getxColumn() {
-        return xColumn;
+    public int getcolumnColumn() {
+        return columnColumn;
     }
 
-    public void setxColumn(int xColumn) {
-        this.xColumn = xColumn;
+    public void setcolumnColumn(int columnColumn) {
+        this.columnColumn = columnColumn;
     }
 
-    public int getyColumn() {
-        return yColumn;
+    public int getrowColumn() {
+        return rowColumn;
     }
 
-    public void setyColumn(int yColumn) {
-        this.yColumn = yColumn;
+    public void setrowColumn(int rowColumn) {
+        this.rowColumn = rowColumn;
     }
+    Node hookDown(Node n1) {
+        return new Node();
+    }
+    Node hookRight(Node n1) {
+        return new Node();
+    }
+    void unlinkLR() {
+        
+    }
+    void relinkLR() {
+        
+    }
+    void unlinkUD() {
+        
+    }
+    void relinkUD() {
+    }
+    public Node() {
+        
+    }
+    void cover() {
+        
+    }
+    void uncover() {
+    }
+    
+    
 }
