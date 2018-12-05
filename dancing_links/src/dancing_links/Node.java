@@ -11,7 +11,7 @@ package dancing_links;
  * @author taha
  */
 public class Node {
-    int columnUp, rowUp, columnDown, rowDown, columnLeft, rowLeft, columnRight, rowRight, columnColumn, rowColumn, size, row, column ;
+    int columnUp, rowUp, columnDown, rowDown, columnLeft, rowLeft, columnRight, rowRight, columnColumn, rowColumn, size, row, column;
 
     public int getColumnUp() {
         return columnUp;
