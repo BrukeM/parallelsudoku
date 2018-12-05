@@ -117,11 +117,17 @@ public class DancingLinks {
 
         void cover(ColumnNode header) {
             unlinkLR();
-            for (DancingNode i = this.D; i != this; i = i.D) {
-                for (DancingNode j = i.R; j != i; j = j.R) {
+            int k= 0;
+            for (DancingNode i = this.D; k < this.size; i = i.D) {
+                for (DancingNode j = i.R; !j.C.name.equals(i.C.name); j = j.R) {
+                    System.out.println("before -- j name: " + j.C.name + ", i name: " + i.C.name);
                     j.unlinkUD();
                     j.C.size--;
+//                    k--;
+                    System.out.println("after -- j name: " + j.C.name + ", i name: " + i.C.name);
                 }
+                System.out.println("exited");
+//                k++;
             }
             header.size--; // not part of original
         }
@@ -131,6 +137,7 @@ public class DancingLinks {
                 for (DancingNode j = i.L; j != i; j = j.L) {
                     j.C.size++;
                     j.relinkUD();
+//                    System.out.println("yo");
                 }
             }
             relinkLR();
@@ -158,26 +165,39 @@ public class DancingLinks {
             }
             solutions++;
         } else {
-            ColumnNode c = selectColumnNodeHeuristic(header);
-            c.cover(header);
-
+            System.out.println("iter: " + k);
+            ColumnNode newHeader = deep_copy(header);
+            System.out.println("copy success");
+//            ColumnNode c = selectColumnNodeHeuristic(header);
+//            c.cover(header);
+            ColumnNode c = selectColumnNodeHeuristic(newHeader);
+            System.out.println("heuristic success: " + c.name);
+            c.cover(newHeader);
+            System.out.println("first cover success");
+            
             for (DancingNode r = c.D; r != c; r = r.D) {
+//                 newHeader = deep_copy(header);
                 answer.add(r);
+                
 
                 for (DancingNode j = r.R; j != r; j = j.R) {
-                    j.C.cover(header);
+//                    j.C.cover(header);
+                      j.C.cover(newHeader);
                 }
 
-                search(header, k + 1);
+//                search(header, k + 1);
+                search(newHeader, k + 1);
 
                 r = answer.remove(answer.size() - 1);
                 c = r.C;
 
                 for (DancingNode j = r.L; j != r; j = j.L) {
-                    j.C.uncover(header);
+//                    j.C.uncover(header);
+                    j.C.uncover(newHeader);
                 }
             }
-            c.uncover(header);
+//            c.uncover(header);
+            c.uncover(newHeader);
         }
     }
 
@@ -188,11 +208,12 @@ public class DancingLinks {
     private ColumnNode selectColumnNodeHeuristic(ColumnNode header) {
         int min = Integer.MAX_VALUE;
         ColumnNode ret = null;
-        for (ColumnNode c = (ColumnNode) header.R; c != header; c = (ColumnNode) c.R) {
+        for (ColumnNode c = (ColumnNode) header.R; !c.name.equals(header.name); c = (ColumnNode) c.R) {
             if (c.size < min) {
                 min = c.size;
                 ret = c;
             }
+//            System.out.println(c.name + ", " + header.name);
         }
         return ret;
     }
@@ -236,14 +257,17 @@ public class DancingLinks {
         }
     }
     
-    public ColumnNode deep_copy(ColumnNode headerNode, int[][] grid){
+    public ColumnNode deep_copy(ColumnNode headerNode){
         // HARD CODE
-        final int COLS = 324;
+//        final int COLS = 324;
         final int ROWS = 729;
         
         HashMap<DancingNode, DancingNode> nodeMap = new HashMap<>();
         nodeMap.put(headerNode, new ColumnNode(headerNode, "newHeader"));
-        for (ColumnNode c = (ColumnNode) headerNode.R; c != headerNode; c = (ColumnNode) c.R){
+        int s = 0;
+        for (ColumnNode c = (ColumnNode) headerNode.R; !c.name.equals(headerNode.name); c = (ColumnNode) c.R){
+            s++;
+//            System.out.println("Deep copy: "+ c.name);
             nodeMap.put(c, new ColumnNode(c, c.name + "prime"));
             for(DancingNode d = c.D; d != c; d = d.D){
                 nodeMap.put(d, new DancingNode((ColumnNode) nodeMap.get(c), d));
@@ -252,6 +276,7 @@ public class DancingLinks {
 //        System.out.println(((ColumnNode) nodeMap.get(headerNode.R)).name);
         ColumnNode newHeaderNode = (ColumnNode) nodeMap.get(headerNode);
         ColumnNode currentColumnNewNode = newHeaderNode;
+        ColumnNode previousColumnNewNode = newHeaderNode;
         DancingNode currentDancingNewNode;
         for (ColumnNode c = (ColumnNode) headerNode; !c.name.equals(newHeaderNode.name); c = (ColumnNode) c.R){
 //            System.out.println("c name: " + c.name);
@@ -259,25 +284,76 @@ public class DancingLinks {
 //            System.out.println("in loop: " + ((ColumnNode) nodeMap.get(c.R)).name);
             if("newHeader".equals(((ColumnNode) nodeMap.get(c.R)).name)){
 //                System.out.println("finished");
+                System.out.println("last: " + currentColumnNewNode.name);
+                System.out.println("last2: " + currentColumnNewNode.R.C.name);
                 currentColumnNewNode.R = newHeaderNode;
-                break;
-            } else {
-                currentColumnNewNode.R = nodeMap.get(c.R);                
+                currentColumnNewNode.R.L = currentColumnNewNode;
+                
                 currentDancingNewNode = currentColumnNewNode.R;
+                DancingNode prevDancingNewNode = currentColumnNewNode.R;
+                
 //                System.out.println(((ColumnNode) c.R).name);
-                for (DancingNode d = c.R; !d.C.name.equals(((ColumnNode) currentColumnNewNode.R).name); d = d.D){
-                    System.out.println("\td col name: " + d.C.name);
-                    System.out.println("\td val: " + d.D);
-                    System.out.println("\tin subloop: " + nodeMap.get(d.D));
+                int i = 0;
+//                System.out.println("size is: " + c.size);
+                for (DancingNode d = c.R; i < c.size; d = d.D){
+//                    System.out.println("test");
                     if(d.D == c.R){
                         currentDancingNewNode.D = currentColumnNewNode.R;
                         break;
                     } else {
+//                    System.out.println("\td col name: " + d.C.name);
+//                    System.out.println("\td val: " + d.D);
+//                    System.out.println("\tin subloop: " + nodeMap.get(d.D));
                         currentDancingNewNode.D = nodeMap.get(d.D);
+                        currentDancingNewNode.U = prevDancingNewNode;//nodeMap.get(d);
+                        currentDancingNewNode.L = nodeMap.get(d.L);
+                        currentDancingNewNode.R = nodeMap.get(d.R);
+
+                        
+                        currentDancingNewNode.C = (ColumnNode) currentColumnNewNode.R;
+                        System.out.println(nodeMap.get(d.L).C.name + " " + currentDancingNewNode.L.C.name);
+//                        currentDancingNewNode.L.R = currentDancingNewNode;
+//                        currentDancingNewNode.R.L = currentDancingNewNode;
+                        prevDancingNewNode = currentDancingNewNode;
                         currentDancingNewNode = currentDancingNewNode.D;
-                        currentDancingNewNode.U = nodeMap.get(d);
     //                    break;
                     }
+                    i++;
+                }
+                break;
+            } else {
+                currentColumnNewNode.R = nodeMap.get(c.R);                
+                currentColumnNewNode.R.L = currentColumnNewNode; //nodeMap.get(c.R.L);
+                currentDancingNewNode = currentColumnNewNode.R;
+                DancingNode prevDancingNewNode = currentColumnNewNode.R;
+                
+//                System.out.println(((ColumnNode) c.R).name);
+                int i = 0;
+//                System.out.println("size is: " + c.size);
+                for (DancingNode d = c.R; i < c.size; d = d.D){
+//                    System.out.println("test");
+                    if(d.D == c.R){
+                        currentDancingNewNode.D = currentColumnNewNode.R;
+                        break;
+                    } else {
+//                    System.out.println("\td col name: " + d.C.name);
+//                    System.out.println("\td val: " + d.D);
+//                    System.out.println("\tin subloop: " + nodeMap.get(d.D));
+                        currentDancingNewNode.D = nodeMap.get(d.D);
+                        currentDancingNewNode.U = prevDancingNewNode;//nodeMap.get(d);
+                        currentDancingNewNode.L = nodeMap.get(d.L);
+                        currentDancingNewNode.R = nodeMap.get(d.R);
+
+                        
+                        currentDancingNewNode.C = (ColumnNode) currentColumnNewNode.R;
+                        System.out.println(nodeMap.get(d.L.L).C.name + " " + currentDancingNewNode.L.L.C.name);
+//                        currentDancingNewNode.L.R = currentDancingNewNode;
+//                        currentDancingNewNode.R.L = currentDancingNewNode;
+                        prevDancingNewNode = currentDancingNewNode;
+                        currentDancingNewNode = currentDancingNewNode.D;
+    //                    break;
+                    }
+                    i++;
                 }
 //                currentNewNode.L = nodeMap.get(c);
                 currentColumnNewNode = (ColumnNode) currentColumnNewNode.R;
@@ -285,27 +361,43 @@ public class DancingLinks {
             }
         }
         
+        
+        currentColumnNewNode = newHeaderNode;
+        boolean broken = false;
+        
 //        ColumnNode newHeaderNode = new ColumnNode(headerNode, "newHeader");
-        ArrayList<ColumnNode> newColumnNodes = new ArrayList<ColumnNode>();
+//        ArrayList<ColumnNode> newColumnNodes = new ArrayList<ColumnNode>();
+        System.out.println("---------------");
         System.out.println("new");
-        System.out.println(newHeaderNode.C.name);
+//        System.out.println(newHeaderNode.R.D.R.C.name);
+//        System.out.println(newHeaderNode.L.L.C.name);
+//        System.out.println(newHeaderNode.C.name);
         System.out.println(newHeaderNode.R.C.name);
-//        System.out.println(newHeaderNode.L.C.name);
+        System.out.println(newHeaderNode.R.R.L.R.L.C.name);
+//        System.out.println(newHeaderNode.L.L.C.name);
+//        System.out.println(newHeaderNode.L.L.L.L.L.D.D.L.L.R.R.R.D.D.R.R.C.name);
+//        System.out.println(newHeaderNode.L.L.L.L.L.D.D.U.D.L.R.L);
 //        System.out.println(newHeaderNode.U.C.name);
 //        System.out.println(newHeaderNode.D.C.name);
 //        System.out.println(newHeaderNode.size);
 //        System.out.println(newHeaderNode.name);
+        System.out.println(newHeaderNode.R.R.D.D.D.R.C.name);
         System.out.println("old");
-        System.out.println(headerNode.C.name);
+//        System.out.println(headerNode.R.D.L.L.C.name);
+//        System.out.println(headerNode.C.name);
         System.out.println(headerNode.R.C.name);
-//        System.out.println(headerNode.L.C.name);
+        System.out.println(headerNode.R.R.L.R.L.C.name);
+//        System.out.println(headerNode.L.L.C.name);
+//        System.out.println(headerNode.L.L.L.L.L.D.D.L.L.R.R.R.D.D.R.R.C.name);
+//        System.out.println(headerNode.L.L.L.L.L.L.L.L.D.D.D.U.D.L.R.L);
 //        System.out.println(headerNode.U.C.name);
 //        System.out.println(headerNode.D.C.name);
 //        System.out.println(headerNode.size);
 //        System.out.println(headerNode.name);
+        System.out.println(headerNode.R.R.D.D.D.R.C.name);
+//        System.out.println("");
         
-        
-        newHeaderNode.size = COLS;        
+        newHeaderNode.size = headerNode.size;        
         return newHeaderNode;
     }
 
@@ -364,7 +456,7 @@ public class DancingLinks {
 
     public DancingLinks(int[][] grid, SolutionHandler h) {
         header = makeDLXBoard(grid);
-        newHeader = deep_copy(header, grid);
+        newHeader = deep_copy(header);
         handler = h;
     }
 
