@@ -100,31 +100,13 @@ public class Node {
     public void setrowColumn(int rowColumn) {
         this.rowColumn = rowColumn;
     }
-    Node hookDown(Node n1) {
-        return new Node();
-    }
-    Node hookRight(Node n1) {
-        return new Node();
-    }
-    void unlinkLR() {
-        
-    }
-    void relinkLR() {
-        
-    }
-    void unlinkUD() {
-        
-    }
-    void relinkUD() {
+    
+    public Node(int i) {
+        size = 0;
+        this.columnColumn = i;
     }
     public Node() {
-        
-    }
-    void cover() {
-        
-    }
-    void uncover() {
-    }
-    
+            size = 0;
+    }    
     
 }
