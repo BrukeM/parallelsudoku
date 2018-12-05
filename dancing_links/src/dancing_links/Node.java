@@ -11,102 +11,120 @@ package dancing_links;
  * @author taha
  */
 public class Node {
-    int columnUp, rowUp, columnDown, rowDown, columnLeft, rowLeft, columnRight, rowRight, columnColumn, rowColumn, size ;
+    int columnUp, rowUp, columnDown, rowDown, columnLeft, rowLeft, columnRight, rowRight, columnColumn, rowColumn, size, row, column ;
 
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public int getcolumnUp() {
+    public int getColumnUp() {
         return columnUp;
     }
 
-    public void setcolumnUp(int columnUp) {
+    public void setColumnUp(int columnUp) {
         this.columnUp = columnUp;
     }
 
-    public int getrowUp() {
+    public int getRowUp() {
         return rowUp;
     }
 
-    public void setrowUp(int rowUp) {
+    public void setRowUp(int rowUp) {
         this.rowUp = rowUp;
     }
 
-    public int getcolumnDown() {
+    public int getColumnDown() {
         return columnDown;
     }
 
-    public void setcolumnDown(int columnDown) {
+    public void setColumnDown(int columnDown) {
         this.columnDown = columnDown;
     }
 
-    public int getrowDown() {
+    public int getRowDown() {
         return rowDown;
     }
 
-    public void setrowDown(int rowDown) {
+    public void setRowDown(int rowDown) {
         this.rowDown = rowDown;
     }
 
-    public int getcolumnLeft() {
+    public int getColumnLeft() {
         return columnLeft;
     }
 
-    public void setcolumnLeft(int columnLeft) {
+    public void setColumnLeft(int columnLeft) {
         this.columnLeft = columnLeft;
     }
 
-    public int getrowLeft() {
+    public int getRowLeft() {
         return rowLeft;
     }
 
-    public void setrowLeft(int rowLeft) {
+    public void setRowLeft(int rowLeft) {
         this.rowLeft = rowLeft;
     }
 
-    public int getcolumnRight() {
+    public int getColumnRight() {
         return columnRight;
     }
 
-    public void setcolumnRight(int columnRight) {
+    public void setColumnRight(int columnRight) {
         this.columnRight = columnRight;
     }
 
-    public int getrowRight() {
+    public int getRowRight() {
         return rowRight;
     }
 
-    public void setrowRight(int rowRight) {
+    public void setRowRight(int rowRight) {
         this.rowRight = rowRight;
     }
 
-    public int getcolumnColumn() {
+    public int getColumnColumn() {
         return columnColumn;
     }
 
-    public void setcolumnColumn(int columnColumn) {
+    public void setColumnColumn(int columnColumn) {
         this.columnColumn = columnColumn;
     }
 
-    public int getrowColumn() {
+    public int getRowColumn() {
         return rowColumn;
     }
 
-    public void setrowColumn(int rowColumn) {
+    public void setRowColumn(int rowColumn) {
         this.rowColumn = rowColumn;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    public Node(int column, int row){
+        this.columnColumn = column;
+        this.rowColumn = 0;
+        this.column = column;
+        this.row = row;
     }
     
     public Node(int i) {
         size = 0;
         this.columnColumn = i;
+        this.rowColumn = 0;
+        this.column = i;
+        this.row = 0;
     }
     public Node() {
-            size = 0;
+        size = 0;
     }    
     
 }
