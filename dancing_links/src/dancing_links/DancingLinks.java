@@ -151,7 +151,41 @@ public class DancingLinks {
     private int updates = 0;
     private SolutionHandler handler;
     private List<DancingNode> answer;
+    
+    private Node[][] linkTable = new Node[729][325];
+    private final int HEADER_COL = 325;
+    private final int HEADER_ROW = 0;
+    private final Node HEADER;
 
+    // hooke a node n1 to the right of `this` node
+    Node hookRight(Node n1, Node n2) {
+//        n1.R = this.R;
+//        System.out.println("step 1");
+//        n1.R.L = n1;
+//        System.out.println("step 2");
+//        n1.L = this;
+//        System.out.println("step 3");
+//        this.R = n1;
+//        System.out.println("step 4");
+//        return n1;
+        n2.setColumnRight(n1.getColumnRight());
+        n2.setRowRight(n1.getRowRight());
+        
+        Node n3 = linkTable[n2.rowRight][n2.columnRight];
+        n3.setRowLeft(n2.row);
+        n3.setColumnLeft(n2.column);
+        linkTable[n2.row][n3.column] = n3;
+        
+        n2.setRowLeft(n1.row);
+        n2.setColumnLeft(n1.column);
+        n1.setColumnRight(n2.column);
+        n1.setRowRight(n2.row);
+        
+        linkTable[n2.row][n2.column] = n2;
+        linkTable[n1.row][n1.column] = n1;
+        
+        return n2;
+    }
     // Heart of the algorithm
     private void search(ColumnNode header, int k) {
         if (header.R == header) { // all the columns removed
@@ -165,39 +199,26 @@ public class DancingLinks {
             }
             solutions++;
         } else {
-            System.out.println("iter: " + k);
-            ColumnNode newHeader = deep_copy(header);
-            System.out.println("copy success");
-//            ColumnNode c = selectColumnNodeHeuristic(header);
-//            c.cover(header);
-            ColumnNode c = selectColumnNodeHeuristic(newHeader);
-            System.out.println("heuristic success: " + c.name);
-            c.cover(newHeader);
-            System.out.println("first cover success");
+            ColumnNode c = selectColumnNodeHeuristic(header);
+            c.cover(header);
             
             for (DancingNode r = c.D; r != c; r = r.D) {
-//                 newHeader = deep_copy(header);
                 answer.add(r);
-                
 
                 for (DancingNode j = r.R; j != r; j = j.R) {
-//                    j.C.cover(header);
-                      j.C.cover(newHeader);
+                      j.C.cover(header);
                 }
 
-//                search(header, k + 1);
-                search(newHeader, k + 1);
+                search(header, k + 1);
 
                 r = answer.remove(answer.size() - 1);
                 c = r.C;
 
                 for (DancingNode j = r.L; j != r; j = j.L) {
-//                    j.C.uncover(header);
-                    j.C.uncover(newHeader);
+                    j.C.uncover(header);
                 }
             }
-//            c.uncover(header);
-            c.uncover(newHeader);
+            c.uncover(header);
         }
     }
 
@@ -214,6 +235,19 @@ public class DancingLinks {
                 ret = c;
             }
 //            System.out.println(c.name + ", " + header.name);
+        }
+        selectColumnNodeHeuristic();
+        return ret;
+    }
+    
+     private Node selectColumnNodeHeuristic() {
+        int min = Integer.MAX_VALUE;
+        Node ret = null;
+        for (Node c = linkTable[HEADER.rowRight][HEADER.columnRight]; c != HEADER; c = linkTable[c.rowRight][c.columnRight]) {
+            if (c.size < min) {
+                min = c.size;
+                ret = c;
+            }
         }
         return ret;
     }
@@ -414,6 +448,41 @@ public class DancingLinks {
             ColumnNode n = new ColumnNode(Integer.toString(i));
             columnNodes.add(n);
             headerNode = (ColumnNode) headerNode.hookRight(n);
+        }
+
+        headerNode = headerNode.R.C;
+        for (int i = 0; i < ROWS; i++) {
+            DancingNode prev = null;
+            for (int j = 0; j < COLS; j++) {
+                if (grid[i][j] == 1) {
+                    ColumnNode col = columnNodes.get(j);
+                    DancingNode newNode = new DancingNode(col);
+                    if (prev == null) {
+                        prev = newNode;
+                    }
+                    col.U.hookDown(newNode);
+                    prev = prev.hookRight(newNode);
+                    col.size++;
+                }
+            }
+        }
+
+        headerNode.size = COLS;
+        return headerNode;
+    }
+    
+    
+    private Node makeDLXBoardNew(int[][] grid) {
+        final int COLS = grid[0].length;
+        final int ROWS = grid.length;
+
+        Node headerNode = new Node();
+        ArrayList<Node> columnNodes = new ArrayList<Node>();
+
+        for (int i = 0; i < COLS; i++) {
+            Node n = new Node(i);
+            columnNodes.add(n);
+            headerNode = hookRight(headerNode, n);
 //            System.out.println(headerNode.L.C.name +"<-" + headerNode.name + "->" + headerNode.R.C.name);
         }
 
@@ -443,7 +512,6 @@ public class DancingLinks {
         return headerNode;
     }
     
-    
 
     private void showInfo() {
         System.out.println("Number of updates: " + updates);
@@ -456,7 +524,7 @@ public class DancingLinks {
 
     public DancingLinks(int[][] grid, SolutionHandler h) {
         header = makeDLXBoard(grid);
-        newHeader = deep_copy(header);
+//        newHeader = deep_copy(header);
         handler = h;
     }
 
@@ -469,7 +537,7 @@ public class DancingLinks {
         solutions = 0;
         updates = 0;
         answer = new LinkedList<DancingNode>();
-//        search(header, 0);        
+        search(header, 0);        
 //        if(verbose) showInfo();
 
 /**
