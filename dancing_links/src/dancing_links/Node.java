@@ -114,17 +114,37 @@ public class Node {
         this.rowColumn = 0;
         this.column = column;
         this.row = row;
+        this.columnLeft = column;
+        this.rowLeft = row;
+        this.columnRight = column;
+        this.rowRight = row;
+        this.columnUp = column;
+        this.rowUp = row;
+        this.columnDown = column;
+        this.rowDown = row;
     }
     
     public Node(int i) {
+        this(i, 0);
         size = 0;
-        this.columnColumn = i;
-        this.rowColumn = 0;
-        this.column = i;
-        this.row = 0;
+        
     }
+    
+//    Header initializer only
     public Node() {
-        size = 0;
+        this.size = 0;
+        this.columnColumn = 324;
+        this.rowColumn = 0;
+        this.column = 324;
+        this.row = 0;
+        this.columnUp = 324;
+        this.rowUp = 0;
+        this.columnDown = 324;
+        this.rowDown = 0;
+        this.columnLeft = 324;
+        this.rowLeft = 0;
+        this.columnRight = 324;
+        this.rowRight = 0;
     }    
     
 }
