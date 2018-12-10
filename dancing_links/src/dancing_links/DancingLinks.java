@@ -255,6 +255,7 @@ public class DancingLinks {
     private int updates = 0;
     private SolutionHandler handler;
     private List<DancingNode> answer;
+    private List<Node> answerNew;
 
     private Node[][] linkTable = new Node[729][325];
     private final int HEADER_COL = 324;
@@ -263,15 +264,6 @@ public class DancingLinks {
 
     // hooke a node n1 to the right of `this` node
     Node hookRight(Node n1, Node n2) {
-//        n1.R = this.R;
-//        System.out.println("step 1");
-//        n1.R.L = n1;
-//        System.out.println("step 2");
-//        n1.L = this;
-//        System.out.println("step 3");
-//        this.R = n1;
-//        System.out.println("step 4");
-//        return n1;
         n2.setColumnRight(n1.getColumnRight());
         n2.setRowRight(n1.getRowRight());
         Node n3 = linkTable[n2.rowRight][n2.columnRight];
@@ -296,30 +288,34 @@ public class DancingLinks {
                 System.out.println("-----------------------------------------");
                 System.out.println("Solution #" + solutions + "\n");
             }
-            handler.handleSolution(answer);
+            handler.handleSolution(answerNew, iLinkTable);
             if (verbose) {
                 System.out.println("-----------------------------------------");
             }
+            System.out.println(k);
             solutions++;
         } else {
             Node c = selectColumnNodeHeuristic(HEADER, iLinkTable);
             c = cover(c, iLinkTable);
 
             for (Node r = iLinkTable[c.getRowDown()][c.getColumnDown()]; r != c; r = iLinkTable[r.getRowDown()][r.getColumnDown()]) {
+                answerNew.add(r);
                 for (Node j = iLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = iLinkTable[j.getRowRight()][j.getColumnRight()]) {
                     cover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
                 }
 
                 searchNew(iLinkTable[0][324], iLinkTable, k + 1);
+                
+                r = answerNew.remove(answerNew.size() - 1);
+                c = iLinkTable[r.getRowColumn()][r.getColumnColumn()];
 
-                // deal with answer
-                //update c from answer
                 for (Node j = iLinkTable[c.getRowLeft()][c.getColumnLeft()]; j != r; j = iLinkTable[j.getRowLeft()][j.getColumnLeft()]) {
                     uncover(j, iLinkTable);
                 }
             }
             uncover(c, iLinkTable);
         }
+        System.out.println(updates);
     }
 
     // Heart of the algorithm
@@ -329,7 +325,7 @@ public class DancingLinks {
                 System.out.println("-----------------------------------------");
                 System.out.println("Solution #" + solutions + "\n");
             }
-            handler.handleSolution(answer);
+//            handler.handleSolution(answer);
             if (verbose) {
                 System.out.println("-----------------------------------------");
             }
@@ -344,7 +340,7 @@ public class DancingLinks {
                 for (DancingNode j = r.R; j != r; j = j.R) {
                     j.C.cover(header);
                 }
-
+ 
                 search(header, k + 1);
 
                 r = answer.remove(answer.size() - 1);
@@ -653,9 +649,9 @@ public class DancingLinks {
     }
 
     // Grid consists solely of 1s and 0s. Undefined behaviour otherwise
-    public DancingLinks(int[][] grid) {
-        this(grid, new DefaultHandler());
-    }
+//    public DancingLinks(int[][] grid) {
+////        this(grid, new DefaultHandler());
+//    }
 
     public DancingLinks(int[][] grid, SolutionHandler h) {
 //        header = makeDLXBoard(grid);
@@ -672,10 +668,11 @@ public class DancingLinks {
     public void runSolver() {
         solutions = 0;
         updates = 0;
-        answer = new LinkedList<DancingNode>();
+//        answer = new LinkedList<DancingNode>();
+        answerNew = new LinkedList<Node>();
 //        search(header, 0);
         searchNew(HEADER, linkTable, 0);
-//        if(verbose) showInfo();
+        if(verbose) showInfo();
 
         /**
          * ================================ Make testing statements below this

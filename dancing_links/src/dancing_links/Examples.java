@@ -27,8 +27,8 @@ public class Examples{
                             { 0, 0, 0, 1, 1, 0, 1 } 
                           };
 
-        DancingLinks DLX = new DancingLinks(example);
-        DLX.runSolver();
+//        DancingLinks DLX = new DancingLinks(example);
+//        DLX.runSolver();
     }
     
     private static int[][] fromString(String s){
@@ -77,7 +77,6 @@ public class Examples{
                     long elapsed = System.nanoTime() - milis;
                     
                     timings.add(elapsed);
-                    break;
                 }    
                 
             } catch (Exception e){
