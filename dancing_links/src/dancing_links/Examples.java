@@ -77,7 +77,8 @@ public class Examples{
                     long elapsed = System.nanoTime() - milis;
                     
                     timings.add(elapsed);
-                }    
+//                    break;
+                }
                 
             } catch (Exception e){
                 e.printStackTrace();

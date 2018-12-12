@@ -165,35 +165,35 @@ public class DancingLinks {
         }
     }
 
-    private Node uncover(Node c, Node[][] iLinkTable) {
+    private Node[][] uncover(Node c, Node[][] iLinkTable) {
         for (Node i = iLinkTable[c.getRowUp()][c.getColumnUp()]; i != c; i = iLinkTable[i.getRowUp()][i.getColumnUp()]) {
             for (Node j = iLinkTable[i.getRowLeft()][i.getColumnLeft()]; j != i; j = iLinkTable[j.getRowLeft()][j.getColumnLeft()]) {
                 iLinkTable[j.rowColumn][j.columnColumn].size++;
-                relinkUD(j, iLinkTable);
+                iLinkTable = relinkUD(j, iLinkTable);
             }
 
         }
-        relinkLR(c, iLinkTable);
+        iLinkTable = relinkLR(c, iLinkTable);
         iLinkTable[0][324].size++;
 
-        return iLinkTable[c.row][c.column];
+        return iLinkTable;
     }
 
-    private Node cover(Node c, Node[][] iLinkTable) {
-        unlinkLR(c, iLinkTable);
+    private Node[][] cover(Node c, Node[][] iLinkTable) {
+        iLinkTable = unlinkLR(c, iLinkTable);
         int k = 0;
         for (Node i = iLinkTable[c.getRowDown()][c.getColumnDown()]; i != c; i = iLinkTable[i.getRowDown()][i.getColumnDown()]) {
             for (Node j = iLinkTable[i.getRowRight()][i.getColumnRight()]; j != i; j = iLinkTable[j.getRowRight()][j.getColumnRight()]) {
-                unlinkUD(j, iLinkTable);
+                iLinkTable = unlinkUD(j, iLinkTable);
                 iLinkTable[j.rowColumn][j.columnColumn].size--;
             }
         }
         iLinkTable[0][324].size--;
 
-        return iLinkTable[c.row][c.column];
+        return iLinkTable;
     }
 
-    void relinkLR(Node n, Node[][] iLinkTable) {
+    Node[][] relinkLR(Node n, Node[][] iLinkTable) {
         Node n1 = iLinkTable[n.getRowLeft()][n.getColumnLeft()];
         n1.setRowRight(n.row);
         n1.setColumnRight(n.column);
@@ -205,9 +205,11 @@ public class DancingLinks {
         iLinkTable[n2.row][n2.column] = n2;
 
         updates++;
+        
+        return iLinkTable;
     }
 
-    void unlinkLR(Node n, Node[][] iLinkTable) {
+    Node[][] unlinkLR(Node n, Node[][] iLinkTable) {
         Node n1 = iLinkTable[n.getRowLeft()][n.getColumnLeft()];
         n1.setRowRight(n.getRowRight());
         n1.setColumnRight(n.getColumnRight());
@@ -219,9 +221,11 @@ public class DancingLinks {
         iLinkTable[n2.row][n2.column] = n2;
 
         updates++;
+
+        return iLinkTable;
     }
 
-    void unlinkUD(Node n, Node[][] iLinkTable) {
+    Node[][] unlinkUD(Node n, Node[][] iLinkTable) {
         Node n1 = iLinkTable[n.getRowUp()][n.getColumnUp()];
         n1.setRowDown(n.getRowDown());
         n1.setColumnDown(n.getColumnDown());
@@ -233,9 +237,11 @@ public class DancingLinks {
         iLinkTable[n2.row][n2.column] = n2;
 
         updates++;
+        
+        return iLinkTable;
     }
 
-    void relinkUD(Node n, Node[][] iLinkTable) {
+    Node[][] relinkUD(Node n, Node[][] iLinkTable) {
         Node n1 = iLinkTable[n.getRowUp()][n.getColumnUp()];
         n1.setRowDown(n.row);
         n1.setColumnDown(n.column);
@@ -247,6 +253,8 @@ public class DancingLinks {
         iLinkTable[n2.row][n2.column] = n2;
 
         updates++;
+        
+        return iLinkTable;
     }
 
     private ColumnNode header;
@@ -292,30 +300,34 @@ public class DancingLinks {
             if (verbose) {
                 System.out.println("-----------------------------------------");
             }
-            System.out.println(k);
             solutions++;
         } else {
             Node c = selectColumnNodeHeuristic(HEADER, iLinkTable);
-            c = cover(c, iLinkTable);
+            iLinkTable = cover(c, iLinkTable);
 
             for (Node r = iLinkTable[c.getRowDown()][c.getColumnDown()]; r != c; r = iLinkTable[r.getRowDown()][r.getColumnDown()]) {
                 answerNew.add(r);
                 for (Node j = iLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = iLinkTable[j.getRowRight()][j.getColumnRight()]) {
-                    cover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
+                    iLinkTable = cover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
                 }
-
+                
+//                System.out.println("in");
                 searchNew(iLinkTable[0][324], iLinkTable, k + 1);
+//                System.out.println("out");
+                
+//                if(solutions > 0) {
+//                    return;
+//                }
                 
                 r = answerNew.remove(answerNew.size() - 1);
                 c = iLinkTable[r.getRowColumn()][r.getColumnColumn()];
-
-                for (Node j = iLinkTable[c.getRowLeft()][c.getColumnLeft()]; j != r; j = iLinkTable[j.getRowLeft()][j.getColumnLeft()]) {
-                    uncover(j, iLinkTable);
+                
+                for (Node j = iLinkTable[r.getRowLeft()][r.getColumnLeft()]; j != r; j = iLinkTable[j.getRowLeft()][j.getColumnLeft()]) {
+                    iLinkTable = uncover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
                 }
             }
-            uncover(c, iLinkTable);
+            iLinkTable = uncover(c, iLinkTable);
         }
-        System.out.println(updates);
     }
 
     // Heart of the algorithm
@@ -375,6 +387,7 @@ public class DancingLinks {
         int min = Integer.MAX_VALUE;
         Node ret = null;
         for (Node c = iLinkTable[header.getRowRight()][header.getColumnRight()]; c != header; c = iLinkTable[c.getRowRight()][c.getColumnRight()]) {
+//            System.out.println(min);
             if (c.size < min) {
                 min = c.size;
                 ret = c;
@@ -668,9 +681,7 @@ public class DancingLinks {
     public void runSolver() {
         solutions = 0;
         updates = 0;
-//        answer = new LinkedList<DancingNode>();
         answerNew = new LinkedList<Node>();
-//        search(header, 0);
         searchNew(HEADER, linkTable, 0);
         if(verbose) showInfo();
 
