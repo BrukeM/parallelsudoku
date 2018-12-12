@@ -205,7 +205,7 @@ public class DancingLinks {
         iLinkTable[n2.row][n2.column] = n2;
 
         updates++;
-        
+
         return iLinkTable;
     }
 
@@ -237,7 +237,7 @@ public class DancingLinks {
         iLinkTable[n2.row][n2.column] = n2;
 
         updates++;
-        
+
         return iLinkTable;
     }
 
@@ -253,7 +253,7 @@ public class DancingLinks {
         iLinkTable[n2.row][n2.column] = n2;
 
         updates++;
-        
+
         return iLinkTable;
     }
 
@@ -265,7 +265,7 @@ public class DancingLinks {
     private List<DancingNode> answer;
     private List<Node> answerNew;
 
-    private Node[][] linkTable = new Node[729][325];
+    private Node[][] linkTable = new Node[730][325];
     private final int HEADER_COL = 324;
     private final int HEADER_ROW = 0;
     private final Node HEADER;
@@ -310,18 +310,17 @@ public class DancingLinks {
                 for (Node j = iLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = iLinkTable[j.getRowRight()][j.getColumnRight()]) {
                     iLinkTable = cover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
                 }
-                
+
 //                System.out.println("in");
                 searchNew(iLinkTable[0][324], iLinkTable, k + 1);
 //                System.out.println("out");
-                
+
 //                if(solutions > 0) {
 //                    return;
 //                }
-                
                 r = answerNew.remove(answerNew.size() - 1);
                 c = iLinkTable[r.getRowColumn()][r.getColumnColumn()];
-                
+
                 for (Node j = iLinkTable[r.getRowLeft()][r.getColumnLeft()]; j != r; j = iLinkTable[j.getRowLeft()][j.getColumnLeft()]) {
                     iLinkTable = uncover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
                 }
@@ -352,7 +351,7 @@ public class DancingLinks {
                 for (DancingNode j = r.R; j != r; j = j.R) {
                     j.C.cover(header);
                 }
- 
+
                 search(header, k + 1);
 
                 r = answer.remove(answer.size() - 1);
@@ -386,8 +385,11 @@ public class DancingLinks {
     private Node selectColumnNodeHeuristic(Node header, Node[][] iLinkTable) {
         int min = Integer.MAX_VALUE;
         Node ret = null;
+        int i = 0;
+//        System.out.println(iLinkTable[header.row][header.column].rowRight + " " + iLinkTable[header.row][header.column].rowRight);
         for (Node c = iLinkTable[header.getRowRight()][header.getColumnRight()]; c != header; c = iLinkTable[c.getRowRight()][c.getColumnRight()]) {
-//            System.out.println(min);
+//            System.out.println(i++);
+//            System.out.println(c.row + " " + c.column + " " + c.size);
             if (c.size < min) {
                 min = c.size;
                 ret = c;
@@ -618,17 +620,15 @@ public class DancingLinks {
 
         Node headerNode = new Node();
         linkTable[0][324] = headerNode;
-        for (int j = 0; j < ROWS; j++) {
+        for (int j = 0; j < ROWS+1; j++) {
             for (int i = 0; i < COLS; i++) {
                 linkTable[j][i] = new Node(i, j);
             }
         }
 
-//        ArrayList<Node> columnNodes = new ArrayList<Node>();
         for (int i = 0; i < COLS; i++) {
-            Node x = linkTable[0][324];
             headerNode = hookRight(headerNode, linkTable[0][i]);
-//            System.out.println(headerNode.rowLeft + ", " + headerNode.columnLeft + "<->" + headerNode.rowRight + ", " + headerNode.columnRight);
+//            System.out.println(headerNode.rowLeft + "," + headerNode.columnLeft + " <- " + headerNode.row+ "," + headerNode.column + " -> " + headerNode.rowRight + "," + headerNode.columnRight);
         }
         headerNode = linkTable[headerNode.getRowRight()][headerNode.getColumnRight()];
 
@@ -637,10 +637,11 @@ public class DancingLinks {
             for (int j = 0; j < COLS; j++) {
                 if (grid[i][j] == 1) {
                     Node col = linkTable[0][j];
-                    Node newNode = linkTable[i][j];
+                    Node newNode = linkTable[i+1][j];
                     if (prev == null) {
                         prev = newNode;
                     }
+//                    System.out.println(col.row + " " + col.column);
                     hookDown(linkTable[col.getRowUp()][col.getColumnUp()], newNode);
 
 //                    col.U.hookDown(newNode);
@@ -652,6 +653,9 @@ public class DancingLinks {
                 }
             }
         }
+//        for (Node j = linkTable[0][323]; j != headerNode; j = linkTable[j.getRowLeft()][j.getColumnLeft()]) {
+//            System.out.println(j.row + " " + j.column);
+//        }
 //
         headerNode.size = COLS;
         return headerNode;
@@ -665,7 +669,6 @@ public class DancingLinks {
 //    public DancingLinks(int[][] grid) {
 ////        this(grid, new DefaultHandler());
 //    }
-
     public DancingLinks(int[][] grid, SolutionHandler h) {
 //        header = makeDLXBoard(grid);
         HEADER = makeDLXBoardNew(grid);
@@ -682,8 +685,11 @@ public class DancingLinks {
         solutions = 0;
         updates = 0;
         answerNew = new LinkedList<Node>();
+//        System.out.println(HEADER.rowLeft + " " + HEADER.columnLeft);
         searchNew(HEADER, linkTable, 0);
-        if(verbose) showInfo();
+        if (verbose) {
+            showInfo();
+        }
 
         /**
          * ================================ Make testing statements below this
