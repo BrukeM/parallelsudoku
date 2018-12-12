@@ -4,10 +4,17 @@ package dancing_links;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class DancingLinks {
+public class DancingLinks extends Thread {
 
     static final boolean verbose = true;
+    
+    public void run() {
+//        System.out.println(knum);
+        searchNew(HEADER, linkTable, knum);
+    }
 
     private Node hookDown(Node node, Node n1) {
         assert ((node.columnColumn == n1.columnColumn) && (node.rowColumn == n1.rowColumn));
@@ -269,6 +276,7 @@ public class DancingLinks {
     private final int HEADER_COL = 324;
     private final int HEADER_ROW = 0;
     private final Node HEADER;
+    private final int knum;
 
     // hooke a node n1 to the right of `this` node
     Node hookRight(Node n1, Node n2) {
@@ -304,25 +312,38 @@ public class DancingLinks {
         } else {
             Node c = selectColumnNodeHeuristic(HEADER, iLinkTable);
             iLinkTable = cover(c, iLinkTable);
-
+            
+            Vector threads = new Vector();
             for (Node r = iLinkTable[c.getRowDown()][c.getColumnDown()]; r != c; r = iLinkTable[r.getRowDown()][r.getColumnDown()]) {
                 answerNew.add(r);
+//                Node[][] jLinkTable = iLinkTable.clone();
+                
                 for (Node j = iLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = iLinkTable[j.getRowRight()][j.getColumnRight()]) {
                     iLinkTable = cover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
                 }
 
-//                System.out.println("in");
-                searchNew(iLinkTable[0][324], iLinkTable, k + 1);
-//                System.out.println("out");
-
-//                if(solutions > 0) {
-//                    return;
-//                }
+                if (k < 10) {
+                    Thread t = new Thread(new DancingLinks(iLinkTable[0][324], iLinkTable, answerNew, k + 1));
+                    threads.add(t);
+                    t.start();
+                } else {
+//                    System.out.println(answerNew.size());
+                    searchNew(iLinkTable[0][324], iLinkTable, k + 1);   
+                }
+                System.out.println(k + " == yello");
                 r = answerNew.remove(answerNew.size() - 1);
                 c = iLinkTable[r.getRowColumn()][r.getColumnColumn()];
 
                 for (Node j = iLinkTable[r.getRowLeft()][r.getColumnLeft()]; j != r; j = iLinkTable[j.getRowLeft()][j.getColumnLeft()]) {
                     iLinkTable = uncover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
+                }
+            }
+            for(int index = 0; index < threads.size(); index++) {
+                Thread t = (Thread) threads.get(index);
+                try {
+                    t.join();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DancingLinks.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             iLinkTable = uncover(c, iLinkTable);
@@ -644,19 +665,12 @@ public class DancingLinks {
 //                    System.out.println(col.row + " " + col.column);
                     hookDown(linkTable[col.getRowUp()][col.getColumnUp()], newNode);
 
-//                    col.U.hookDown(newNode);
-////                    System.out.println(col.U.L.C.name + "<-" + col.U.C.name + "->" + col.U.R.C.name);
-//                    prev = prev.hookRight(newNode);
                     prev = hookRight(prev, newNode);
 //                    System.out.println(prev.row + " " + prev.column);
                     col.size++;
                 }
             }
         }
-//        for (Node j = linkTable[0][323]; j != headerNode; j = linkTable[j.getRowLeft()][j.getColumnLeft()]) {
-//            System.out.println(j.row + " " + j.column);
-//        }
-//
         headerNode.size = COLS;
         return headerNode;
     }
@@ -674,6 +688,14 @@ public class DancingLinks {
         HEADER = makeDLXBoardNew(grid);
 //        newHeader = deep_copy(header);
         handler = h;
+        knum = 0;
+    }
+    
+    public DancingLinks(Node head, Node[][] jLinkTable, List<Node> answer, int k) {
+        HEADER = head;
+        linkTable = jLinkTable;
+        knum = k;
+        answerNew = answer;
     }
 
     public ColumnNode duplicateGrid(ColumnNode oldHeader) {

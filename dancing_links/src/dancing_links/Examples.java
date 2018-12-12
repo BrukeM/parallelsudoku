@@ -52,7 +52,6 @@ public class Examples{
         
         BufferedReader reader = null;
         String text = null;
-        int boardNum = 0;
         for(String diff : diffs){
             
             String filename = "boards/" + diff;
@@ -63,8 +62,6 @@ public class Examples{
                 reader = new BufferedReader(new FileReader(filename));
                 
                 while ((text = reader.readLine()) != null) {
-                    
-                    boardNum++;
                     
                     int[][] sudoku = fromString(text);
                     
@@ -80,6 +77,8 @@ public class Examples{
                     
                     timings.add(elapsed);
                     
+                    break;
+                    
                 }
                 
             } catch (Exception e){
@@ -88,6 +87,7 @@ public class Examples{
             
             System.out.println("STATS: " + diff + "\n");
             printStats(timings);
+            break;
         }   
     }
     
