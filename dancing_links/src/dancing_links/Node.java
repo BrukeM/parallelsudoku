@@ -10,7 +10,7 @@ package dancing_links;
  *
  * @author taha
  */
-public class Node {
+public class Node implements Cloneable {
     int columnUp, rowUp, columnDown, rowDown, columnLeft, rowLeft, columnRight, rowRight, columnColumn, rowColumn, size, row, column;
 
     public int getColumnUp() {
@@ -145,6 +145,11 @@ public class Node {
         this.rowLeft = 0;
         this.columnRight = 324;
         this.rowRight = 0;
-    }    
+    }
+    
+    public Node clone() throws CloneNotSupportedException {
+        Node cloneObj = (Node) super.clone();
+        return cloneObj;
+    }
     
 }

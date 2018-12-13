@@ -50,11 +50,13 @@ class SudokuHandler implements SolutionHandler {
     }
 
     private int[][] parseBoard(List<Node> answer, Node[][] iLinkTable) {
+        System.out.println(answer.size());
         int[][] result = new int[size][size];
         for (Node n : answer) {
             Node rcNode = n;
             int min = rcNode.column;
             for (Node tmp = iLinkTable[n.getRowRight()][n.getColumnRight()]; tmp != n; tmp = iLinkTable[tmp.getRowRight()][tmp.getColumnRight()]) {
+//                System.out.println(tmp.row + " " + tmp.column);
                 int val = tmp.column;
                 if (val < min) {
                     min = val;
