@@ -13,7 +13,7 @@ public class DancingLinks extends Thread {
 
     @Override
     public void run() {
-        searchNew(HEADER, linkTable, answerNew, knum);
+        searchNew(linkTable[0][324], linkTable, answerNew, knum);
     }
 
     private Node hookDown(Node node, Node n1) {
@@ -271,6 +271,7 @@ public class DancingLinks extends Thread {
     private SolutionHandler handler;
     private List<DancingNode> answer;
     private List<Node> answerNew;
+    private boolean inThread = false;
 
     private Node[][] linkTable = new Node[730][325];
     private final int HEADER_COL = 324;
@@ -329,15 +330,15 @@ public class DancingLinks extends Thread {
                 for (Node j = cloneLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = cloneLinkTable[j.getRowRight()][j.getColumnRight()]) {
                     cloneLinkTable = cover(cloneLinkTable[j.rowColumn][j.columnColumn], cloneLinkTable);
                 }
-
+//                System.out.println(answerNew.size());
                 searchNew(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, k + 1);
-//                if (k < 10) {
-//                    Thread t = new Thread(new DancingLinks(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, k + 1));
-//                    threads.add(t);
-//                    t.start();
-//                } else {
-//                    searchNew(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, k + 1);
-//                }
+                if (k < 5 && k != 0) {
+                    Thread t = new Thread(new DancingLinks(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, true, k + 1));
+                    threads.add(t);
+                    t.start();
+                } else {
+                    searchNew(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, k + 1);
+                }
 
                 r = cloneAnswer.remove(cloneAnswer.size() - 1);
 
@@ -732,12 +733,13 @@ public class DancingLinks extends Thread {
         knum = 0;
     }
 
-    public DancingLinks(Node head, Node[][] jLinkTable, List<Node> answer, int k) {
+    public DancingLinks(Node head, Node[][] jLinkTable, List<Node> answer, boolean t_state, int k) {
         HEADER = head;
         linkTable = jLinkTable;
         knum = k;
         answerNew = answer;
-//        System.out.println(answerNew.size());
+        inThread = t_state;
+        System.out.println(answerNew.size());
 
     }
 

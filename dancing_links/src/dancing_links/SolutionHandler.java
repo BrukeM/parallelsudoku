@@ -50,7 +50,6 @@ class SudokuHandler implements SolutionHandler {
     }
 
     private int[][] parseBoard(List<Node> answer, Node[][] iLinkTable) {
-        System.out.println(answer.size());
         int[][] result = new int[size][size];
         for (Node n : answer) {
             Node rcNode = n;
