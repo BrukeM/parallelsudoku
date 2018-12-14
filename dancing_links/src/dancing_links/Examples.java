@@ -69,10 +69,7 @@ public class Examples{
                     
                     long elapsed = System.nanoTime() - milis;
                     
-                    timings.add(elapsed);
-                    
-                    break;
-                    
+                    timings.add(elapsed);                   
                 }
                 
             } catch (Exception e){
@@ -81,7 +78,6 @@ public class Examples{
             
             System.out.println("STATS: " + diff + "\n");
             printStats(timings);
-            break;
         }   
     }
     

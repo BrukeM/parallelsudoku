@@ -147,8 +147,20 @@ public class Node implements Cloneable {
         this.rowRight = 0;
     }
     
-    public Node clone() throws CloneNotSupportedException {
-        Node cloneObj = (Node) super.clone();
+    @Override
+    public Node clone() {
+        Node cloneObj = new Node(this.column, this.row);
+        cloneObj.setColumnColumn(columnColumn);
+        cloneObj.setRowColumn(rowColumn);
+        cloneObj.setColumnDown(columnDown);
+        cloneObj.setRowDown(rowDown);
+        cloneObj.setColumnLeft(columnLeft);
+        cloneObj.setRowLeft(rowLeft);
+        cloneObj.setColumnRight(columnRight);
+        cloneObj.setRowRight(rowRight);
+        cloneObj.setColumnUp(columnUp);
+        cloneObj.setRowUp(rowUp);
+        cloneObj.size = size;
         return cloneObj;
     }
     

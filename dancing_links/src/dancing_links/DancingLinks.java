@@ -217,7 +217,7 @@ public class DancingLinks extends Thread {
 
 //                r = cloneAnswer.remove(cloneAnswer.size() - 1);
                 r = answerNew.remove(answerNew.size() - 1);
-                
+
                 for (Node j = iLinkTable[r.getRowLeft()][r.getColumnLeft()]; j != r; j = iLinkTable[j.getRowLeft()][j.getColumnLeft()]) {
                     iLinkTable = uncover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
                 }
@@ -237,14 +237,10 @@ public class DancingLinks extends Thread {
     }
 
     public static List<Node> cloneList(List<Node> list) {
-        List<Node> clone = new ArrayList<Node>(list.size());
-        for (Node item : list) {
-            try {
-                clone.add(item.clone());
-            } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(DancingLinks.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        List<Node> clone = new ArrayList<>(list.size());
+        list.forEach((item) -> {
+            clone.add(item.clone());
+        });
         return clone;
     }
 
@@ -252,19 +248,10 @@ public class DancingLinks extends Thread {
         Node[][] clone = new Node[730][325];
         for (int i = 0; i < 730; i++) {
             for (int j = 0; j < 324; j++) {
-                try {
-                    clone[i][j] = list[i][j].clone();
-                } catch (CloneNotSupportedException ex) {
-                    Logger.getLogger(DancingLinks.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
+                clone[i][j] = list[i][j].clone();
             }
         }
-        try {
-            clone[0][324] = list[0][324].clone();
-        } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(DancingLinks.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        clone[0][324] = list[0][324].clone();
         return clone;
     }
 
