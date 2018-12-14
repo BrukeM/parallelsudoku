@@ -180,48 +180,37 @@ public class DancingLinks extends Thread {
             Vector threads = new Vector();
             for (Node r = iLinkTable[c.getRowDown()][c.getColumnDown()]; r != c; r = iLinkTable[r.getRowDown()][r.getColumnDown()]) {
                 answerNew.add(r);
-                Node[][] cloneLinkTable = cloneArray(iLinkTable);
-
-                ArrayList<Node> cloneAnswer = new ArrayList<>();
-                for (Node n : answerNew) {
-                    cloneAnswer.add(cloneLinkTable[n.row][n.column]);
-                    r = cloneLinkTable[n.row][n.column];
-                }
-
-                for (Node j = cloneLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = cloneLinkTable[j.getRowRight()][j.getColumnRight()]) {
-                    cloneLinkTable = cover(cloneLinkTable[j.rowColumn][j.columnColumn], cloneLinkTable);
-                }
+                
 //                System.out.println(answerNew.size());
 //                searchNew(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, k + 1);
                 if (k < 5) {
+                    Node[][] cloneLinkTable = cloneArray(iLinkTable);
+
+                    ArrayList<Node> cloneAnswer = new ArrayList<>();
+                    for (Node n : answerNew) {
+                        cloneAnswer.add(cloneLinkTable[n.row][n.column]);
+                        r = cloneLinkTable[n.row][n.column];
+                    }
+
+                    for (Node j = cloneLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = cloneLinkTable[j.getRowRight()][j.getColumnRight()]) {
+                        cloneLinkTable = cover(cloneLinkTable[j.rowColumn][j.columnColumn], cloneLinkTable);
+                    }
                     Thread t = new Thread(new DancingLinks(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, true, handler, k + 1));
                     threads.add(t);
                     t.start();
-//                    boolean stop = true;
-//                    int count = 0;
-//                    while(stop) {
-//                        iLinkTable[1][1].setRowRight(786);
-//                        count++;
-//                        if (count == 10000)
-//                            stop = false;
-//                    }
-//                    try {
-//                        t.join();
-//                    } catch (InterruptedException ex) {
-//                        Logger.getLogger(DancingLinks.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
 
                 } else {
-                    searchNew(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, k + 1);
+                    for (Node j = iLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = iLinkTable[j.getRowRight()][j.getColumnRight()]) {
+                        iLinkTable = cover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
+                    }
+                    searchNew(iLinkTable[0][324], iLinkTable, answerNew, k + 1);
                 }
 
-//                r = cloneAnswer.remove(cloneAnswer.size() - 1);
                 r = answerNew.remove(answerNew.size() - 1);
 
                 for (Node j = iLinkTable[r.getRowLeft()][r.getColumnLeft()]; j != r; j = iLinkTable[j.getRowLeft()][j.getColumnLeft()]) {
                     iLinkTable = uncover(iLinkTable[j.rowColumn][j.columnColumn], iLinkTable);
                 }
-//                r = answerNew.remove(answerNew.size() - 1);
                 c = iLinkTable[r.getRowColumn()][r.getColumnColumn()];
             }
             for (int index = 0; index < threads.size(); index++) {
@@ -251,6 +240,7 @@ public class DancingLinks extends Thread {
                 clone[i][j] = list[i][j].clone();
             }
         }
+        
         clone[0][324] = list[0][324].clone();
         return clone;
     }

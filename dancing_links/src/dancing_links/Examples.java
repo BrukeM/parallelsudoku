@@ -78,6 +78,7 @@ public class Examples{
             
             System.out.println("STATS: " + diff + "\n");
             printStats(timings);
+//            break;
         }   
     }
     
