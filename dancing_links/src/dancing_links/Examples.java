@@ -6,13 +6,7 @@
 package dancing_links;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-
-import dancing_links.NaiveSudokuSolver.*;
-import dancing_links.SudokuDLX.*;
-import dancing_links.DancingLinks.*;
-
 
 import java.util.*;
 

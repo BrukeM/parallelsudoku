@@ -23,27 +23,27 @@ class SudokuHandler implements SolutionHandler {
         AbstractSudokuSolver.printSolution(result);
     }
 
-    private int[][] parseBoard(List<DancingNode> answer) {
-        int[][] result = new int[size][size];
-        for (DancingNode n : answer) {
-            DancingNode rcNode = n;
-            int min = Integer.parseInt(rcNode.C.name);
-            for (DancingNode tmp = n.R; tmp != n; tmp = tmp.R) {
-                int val = Integer.parseInt(tmp.C.name);
-                if (val < min) {
-                    min = val;
-                    rcNode = tmp;
-                }
-            }
-            int ans1 = Integer.parseInt(rcNode.C.name);
-            int ans2 = Integer.parseInt(rcNode.R.C.name);
-            int r = ans1 / size;
-            int c = ans1 % size;
-            int num = (ans2 % size) + 1;
-            result[r][c] = num;
-        }
-        return result;
-    }
+//    private int[][] parseBoard(List<DancingNode> answer) {
+//        int[][] result = new int[size][size];
+//        for (DancingNode n : answer) {
+//            DancingNode rcNode = n;
+//            int min = Integer.parseInt(rcNode.C.name);
+//            for (DancingNode tmp = n.R; tmp != n; tmp = tmp.R) {
+//                int val = Integer.parseInt(tmp.C.name);
+//                if (val < min) {
+//                    min = val;
+//                    rcNode = tmp;
+//                }
+//            }
+//            int ans1 = Integer.parseInt(rcNode.C.name);
+//            int ans2 = Integer.parseInt(rcNode.R.C.name);
+//            int r = ans1 / size;
+//            int c = ans1 % size;
+//            int num = (ans2 % size) + 1;
+//            result[r][c] = num;
+//        }
+//        return result;
+//    }
 
     public SudokuHandler(int boardSize) {
         size = boardSize;
@@ -55,7 +55,6 @@ class SudokuHandler implements SolutionHandler {
             Node rcNode = n;
             int min = rcNode.column;
             for (Node tmp = iLinkTable[n.getRowRight()][n.getColumnRight()]; tmp != n; tmp = iLinkTable[tmp.getRowRight()][tmp.getColumnRight()]) {
-//                System.out.println(tmp.row + " " + tmp.column);
                 int val = tmp.column;
                 if (val < min) {
                     min = val;
