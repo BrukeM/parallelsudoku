@@ -66,5 +66,10 @@ void DancingLinks::printBoard() {
     }
 }
 
+ColumnNode DancingLinks::selectColumnNodeRandom() {
+    // Select a column randomly
+    ColumnNode ptr = (ColumnNode) *(header->R);
+    ColumnNode ret = nullptr;
+}
 
 

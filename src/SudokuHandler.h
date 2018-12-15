@@ -3,12 +3,12 @@
 //
 
 #include "DancingLinks.h"
+#include <list>
 
+#define N 9
 #ifndef PARALLELSUDOKU_SOLUTIONHANDLER_H
 #define PARALLELSUDOKU_SOLUTIONHANDLER_H
 
-#define N 9
-#include <list>
 
 class SudokuHandler {
 private:
