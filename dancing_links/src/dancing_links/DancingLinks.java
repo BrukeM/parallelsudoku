@@ -1,5 +1,3 @@
-// Author: Rafal Szymanski <me@rafal.io>
-// Implementation of the Dancing Links algorithm for exact cover.
 package dancing_links;
 
 import java.util.*;
@@ -11,13 +9,10 @@ public class DancingLinks extends Thread {
     static final boolean verbose = true;
     private int solutions = 0;
     private int updates = 0;
-    private SolutionHandler handler;
+    private final SolutionHandler handler;
     private List<Node> answerNew;
-    private boolean inThread = false;
 
     private Node[][] linkTable = new Node[730][325];
-    private final int HEADER_COL = 324;
-    private final int HEADER_ROW = 0;
     private final Node HEADER;
     private final int knum;
 
@@ -141,7 +136,6 @@ public class DancingLinks extends Thread {
         return iLinkTable;
     }
 
-    // hooke a node n1 to the right of `this` node
     Node hookRight(Node n1, Node n2) {
         n2.setColumnRight(n1.getColumnRight());
         n2.setRowRight(n1.getRowRight());
@@ -181,9 +175,7 @@ public class DancingLinks extends Thread {
             for (Node r = iLinkTable[c.getRowDown()][c.getColumnDown()]; r != c; r = iLinkTable[r.getRowDown()][r.getColumnDown()]) {
                 answerNew.add(r);
                 
-//                System.out.println(answerNew.size());
-//                searchNew(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, k + 1);
-                if (k < 5) {
+                if (k < 5) { // for sequential, set condition to k < 0
                     Node[][] cloneLinkTable = cloneArray(iLinkTable);
 
                     ArrayList<Node> cloneAnswer = new ArrayList<>();
@@ -195,7 +187,7 @@ public class DancingLinks extends Thread {
                     for (Node j = cloneLinkTable[r.getRowRight()][r.getColumnRight()]; j != r; j = cloneLinkTable[j.getRowRight()][j.getColumnRight()]) {
                         cloneLinkTable = cover(cloneLinkTable[j.rowColumn][j.columnColumn], cloneLinkTable);
                     }
-                    Thread t = new Thread(new DancingLinks(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, true, handler, k + 1));
+                    Thread t = new Thread(new DancingLinks(cloneLinkTable[0][324], cloneLinkTable, cloneAnswer, handler, k + 1));
                     threads.add(t);
                     t.start();
 
@@ -221,16 +213,7 @@ public class DancingLinks extends Thread {
                     Logger.getLogger(DancingLinks.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-//            iLinkTable = uncover(c, iLinkTable);
         }
-    }
-
-    public static List<Node> cloneList(List<Node> list) {
-        List<Node> clone = new ArrayList<>(list.size());
-        list.forEach((item) -> {
-            clone.add(item.clone());
-        });
-        return clone;
     }
 
     public static Node[][] cloneArray(Node[][] list) {
@@ -240,7 +223,6 @@ public class DancingLinks extends Thread {
                 clone[i][j] = list[i][j].clone();
             }
         }
-        
         clone[0][324] = list[0][324].clone();
         return clone;
     }
@@ -248,11 +230,7 @@ public class DancingLinks extends Thread {
     private Node selectColumnNodeHeuristic(Node header, Node[][] iLinkTable) {
         int min = Integer.MAX_VALUE;
         Node ret = null;
-        int i = 0;
-//        System.out.println(iLinkTable[header.row][header.column].rowRight + " " + iLinkTable[header.row][header.column].rowRight);
         for (Node c = iLinkTable[header.getRowRight()][header.getColumnRight()]; c != header; c = iLinkTable[c.getRowRight()][c.getColumnRight()]) {
-//            System.out.println(i++);
-//            System.out.println(c.row + " " + c.column + " " + c.size);
             if (c.size < min) {
                 min = c.size;
                 ret = c;
@@ -275,7 +253,6 @@ public class DancingLinks extends Thread {
 
         for (int i = 0; i < COLS; i++) {
             headerNode = hookRight(headerNode, linkTable[0][i]);
-//            System.out.println(headerNode.rowLeft + "," + headerNode.columnLeft + " <- " + headerNode.row+ "," + headerNode.column + " -> " + headerNode.rowRight + "," + headerNode.columnRight);
         }
         headerNode = linkTable[headerNode.getRowRight()][headerNode.getColumnRight()];
 
@@ -288,11 +265,9 @@ public class DancingLinks extends Thread {
                     if (prev == null) {
                         prev = newNode;
                     }
-//                    System.out.println(col.row + " " + col.column);
                     hookDown(linkTable[col.getRowUp()][col.getColumnUp()], newNode);
 
                     prev = hookRight(prev, newNode);
-//                    System.out.println(prev.row + " " + prev.column);
                     col.size++;
                 }
             }
@@ -306,19 +281,16 @@ public class DancingLinks extends Thread {
     }
 
     public DancingLinks(int[][] grid, SolutionHandler h) {
-//        header = makeDLXBoard(grid);
         HEADER = makeDLXBoardNew(grid);
-//        newHeader = deep_copy(header);
         handler = h;
         knum = 0;
     }
 
-    public DancingLinks(Node head, Node[][] jLinkTable, List<Node> answer, boolean t_state, SolutionHandler h, int k) {
+    public DancingLinks(Node head, Node[][] jLinkTable, List<Node> answer, SolutionHandler h, int k) {
         HEADER = head;
         linkTable = jLinkTable;
         knum = k;
         answerNew = answer;
-        inThread = t_state;
         handler = h;
     }
 
